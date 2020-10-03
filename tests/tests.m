@@ -90,6 +90,23 @@ OF_APPLICATION_DELEGATE(Tests)
 
 		of_log(@"Joined room %@", roomID);
 
+		[self sendMessage: roomID];
+	}];
+}
+
+- (void)sendMessage: (OFString *)roomID
+{
+	[_client sendMessage: @"ObjMatrix test successful!"
+		      roomID: roomID
+		       block: ^ (id exception) {
+		if (exception != nil) {
+			of_log(@"Failed to send message to room %@: %@",
+			    roomID, exception);
+			[OFApplication terminateWithStatus: 1];
+		}
+
+		of_log(@"Message sent to %@", roomID);
+
 		[self leaveRoom: roomID];
 	}];
 }

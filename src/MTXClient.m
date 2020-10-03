@@ -28,6 +28,7 @@
 #import "MTXLeaveRoomFailedException.h"
 #import "MTXLoginFailedException.h"
 #import "MTXLogoutFailedException.h"
+#import "MTXSendMessageFailedException.h"
 
 static void
 validateHomeserver(OFURL *homeserver)
@@ -188,7 +189,7 @@ validateHomeserver(OFURL *homeserver)
 				homeserver: _homeserver];
 }
 
-- (void)logOutWithBlock: (mtx_client_logout_block_t)block
+- (void)logOutWithBlock: (mtx_client_response_block_t)block
 {
 	void *pool = objc_autoreleasePoolPush();
 	MTXRequest *request =
@@ -290,7 +291,7 @@ validateHomeserver(OFURL *homeserver)
 }
 
 - (void)leaveRoom: (OFString *)roomID
-	    block: (mtx_client_room_leave_block_t)block
+	    block: (mtx_client_response_block_t)block
 {
 	void *pool = objc_autoreleasePoolPush();
 	MTXRequest *request = [self requestWithPath: [OFString
@@ -309,6 +310,42 @@ validateHomeserver(OFURL *homeserver)
 				     statusCode: statusCode
 				       response: response
 					 client: self]);
+			return;
+		}
+
+		block(nil);
+	}];
+
+	objc_autoreleasePoolPop(pool);
+}
+
+- (void)sendMessage: (OFString *)message
+	     roomID: (OFString *)roomID
+	      block: (mtx_client_response_block_t)block;
+{
+	void *pool = objc_autoreleasePoolPush();
+	OFString *path = [OFString stringWithFormat:
+	    @"/_matrix/client/r0/rooms/%@/send/m.room.message", roomID];
+	MTXRequest *request = [self requestWithPath: path];
+	request.method = OF_HTTP_REQUEST_METHOD_POST;
+	request.body = @{
+		@"msgtype": @"m.text",
+		@"body": message
+	};
+	[request performWithBlock: ^ (mtx_response_t response, int statusCode,
+				       id exception) {
+		if (exception != nil) {
+			block(exception);
+			return;
+		}
+
+		if (statusCode != 200) {
+			block([MTXSendMessageFailedException
+			    exceptionWithMessage: message
+					  roomID: roomID
+				      statusCode: statusCode
+					response: response
+					  client: self]);
 			return;
 		}
 
