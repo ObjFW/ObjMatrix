@@ -65,7 +65,7 @@
 - (OFString *)description
 {
 	return [OFString stringWithFormat:
-	    @"Failed to join room %@ for %@: %@",
-	    _room, self.client.userID, self.response];
+	    @"Failed to join room %@ for %@ with status code %d: %@",
+	    _room, self.client.userID, self.statusCode, self.response];
 }
 @end

@@ -66,7 +66,7 @@
 - (OFString *)description
 {
 	return [OFString stringWithFormat:
-	    @"Failed to log in user %@ on %@: %@",
-	    _user, _homeserver, _response];
+	    @"Failed to log in user %@ on %@ with status code %d: %@",
+	    _user, _homeserver, _statusCode, _response];
 }
 @end

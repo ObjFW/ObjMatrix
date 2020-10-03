@@ -143,6 +143,14 @@ typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
     OF_DESIGNATED_INITIALIZER;
 
 /**
+ * @brief Performs a sync.
+ *
+ * @param block A block to call when a sync was performed
+ */
+- (void)syncWithTimeout: (of_time_interval_t)timeout
+		  block: (mtx_client_response_block_t)block;
+
+/**
  * @brief Logs out the device and invalidates the access token.
  *
  * @warning The client can no longer be used after this succeeded!

@@ -28,7 +28,7 @@
 - (OFString *)description
 {
 	return [OFString stringWithFormat:
-	    @"Failed to log out user %@: %@",
-	    self.client.userID, self.response];
+	    @"Failed to log out user %@ with status code: %@",
+	    self.client.userID, self.statusCode, self.response];
 }
 @end

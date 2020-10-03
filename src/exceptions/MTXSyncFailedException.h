@@ -20,52 +20,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "MTXLeaveRoomFailedException.h"
+#import <ObjFW/ObjFW.h>
 
-#import "MTXClient.h"
+#import "MTXClientException.h"
 
-@implementation MTXLeaveRoomFailedException
-+ (instancetype)exceptionWithRoomID: (OFString *)roomID
-			 statusCode: (int)statusCode
-			   response: (mtx_response_t)response
-			     client: (MTXClient *)client
-{
-	return [[[self alloc] initWithRoomID: roomID
-				  statusCode: statusCode
-				    response: response
-				      client: client] autorelease];
-}
+OF_ASSUME_NONNULL_BEGIN
 
-- (instancetype)initWithRoomID: (OFString *)roomID
-		    statusCode: (int)statusCode
-		      response: (mtx_response_t)response
-			client: (MTXClient *)client
-{
-	self = [super initWithStatusCode: statusCode
-				response: response
-				  client: client];
-
-	@try {
-		_roomID = [roomID copy];
-	} @catch (id e) {
-		[self release];
-		@throw e;
-	}
-
-	return self;
-}
-
-- (void)dealloc
-{
-	[_roomID release];
-
-	[super dealloc];
-}
-
-- (OFString *)description
-{
-	return [OFString stringWithFormat:
-	    @"Failed to leave room %@ for %@ with status code %d: %@",
-	    _roomID, self.client.userID, self.statusCode, self.response];
-}
+@interface MTXSyncFailedException: MTXClientException
 @end
+
+OF_ASSUME_NONNULL_END

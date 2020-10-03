@@ -71,6 +71,11 @@ typedef void (^mtx_request_block_t)(mtx_response_t _Nullable response,
 @property (copy, nonatomic) OFString *path;
 
 /**
+ * @brief The query for the request.
+ */
+@property (copy, nullable, nonatomic) OFString *query;
+
+/**
  * @brief An optional body to send along with the request.
  *
  * This is a dictionary that gets serialized to JSON when the request is sent.

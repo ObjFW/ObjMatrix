@@ -97,6 +97,7 @@
 
 	OFMutableURL *requestURL = [[_homeserver mutableCopy] autorelease];
 	requestURL.path = _path;
+	requestURL.query = _query;
 
 	OFMutableDictionary *headers = [OFMutableDictionary dictionary];
 	headers[@"User-Agent"] = @"ObjMatrix";

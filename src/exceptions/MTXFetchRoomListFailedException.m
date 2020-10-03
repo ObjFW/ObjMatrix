@@ -28,7 +28,7 @@
 - (OFString *)description
 {
 	return [OFString stringWithFormat:
-	    @"Failed to fetch room list for %@: %@",
-	    self.client.userID, self.response];
+	    @"Failed to fetch room list for %@ with status code %d: %@",
+	    self.client.userID, self.statusCode, self.response];
 }
 @end

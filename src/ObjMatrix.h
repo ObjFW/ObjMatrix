@@ -25,8 +25,11 @@
 #import "MTXSQLite3Storage.h"
 #import "MTXStorage.h"
 
+#import "MTXClientException.h"
 #import "MTXFetchRoomListFailedException.h"
 #import "MTXJoinRoomFailedException.h"
 #import "MTXLeaveRoomFailedException.h"
 #import "MTXLoginFailedException.h"
 #import "MTXLogoutFailedException.h"
+#import "MTXSendMessageFailedException.h"
+#import "MTXSyncFailedException.h"

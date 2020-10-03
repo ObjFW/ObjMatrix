@@ -70,7 +70,7 @@
 - (OFString *)description
 {
 	return [OFString stringWithFormat:
-	    @"Failed to send message to room %@ for %@: %@",
-	    _roomID, self.client.userID, self.response];
+	    @"Failed to send message to room %@ for %@ with status code %d: %@",
+	    _roomID, self.client.userID, self.statusCode, self.response];
 }
 @end

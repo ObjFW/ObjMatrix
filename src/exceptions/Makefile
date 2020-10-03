@@ -9,7 +9,8 @@ SRCS = MTXClientException.m			\
        MTXLeaveRoomFailedException.m		\
        MTXLoginFailedException.m		\
        MTXLogoutFailedException.m		\
-       MTXSendMessageFailedException.m
+       MTXSendMessageFailedException.m		\
+       MTXSyncFailedException.m
 INCLUDES = ${SRCS:.m=.h}
 
 include ../../buildsys.mk

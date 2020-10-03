@@ -29,6 +29,7 @@
 #import "MTXLoginFailedException.h"
 #import "MTXLogoutFailedException.h"
 #import "MTXSendMessageFailedException.h"
+#import "MTXSyncFailedException.h"
 
 static void
 validateHomeserver(OFURL *homeserver)
@@ -193,6 +194,35 @@ validateHomeserver(OFURL *homeserver)
 	return [MTXRequest requestWithPath: path
 			       accessToken: _accessToken
 				homeserver: _homeserver];
+}
+
+- (void)syncWithTimeout: (of_time_interval_t)timeout
+		  block: (mtx_client_response_block_t)block
+{
+	void *pool = objc_autoreleasePoolPush();
+	MTXRequest *request = [self
+	    requestWithPath: @"/_matrix/client/r0/sync"];
+	unsigned long long timeoutMs = timeout * 1000;
+	request.query = [OFString stringWithFormat: @"timeout=%llu", timeoutMs];
+	[request performWithBlock: ^ (mtx_response_t response, int statusCode,
+				       id exception) {
+		if (exception != nil) {
+			block(exception);
+			return;
+		}
+
+		if (statusCode != 200) {
+			block([MTXSyncFailedException
+			    exceptionWithStatusCode: statusCode
+					   response: response
+					     client: self]);
+			return;
+		}
+
+		block(nil);
+	}];
+
+	objc_autoreleasePoolPop(pool);
 }
 
 - (void)logOutWithBlock: (mtx_client_response_block_t)block
