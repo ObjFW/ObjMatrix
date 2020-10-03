@@ -20,26 +20,52 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <ObjFW/ObjFW.h>
+#import "MTXJoinRoomFailedException.h"
 
-#import "MTXRequest.h"
+#import "MTXClient.h"
 
-OF_ASSUME_NONNULL_BEGIN
+@implementation MTXJoinRoomFailedException
++ (instancetype)exceptionWithRoom: (OFString *)room
+		       statusCode: (int)statusCode
+			 response: (mtx_response_t)response
+			   client: (MTXClient *)client
+{
+	return [[[self alloc] initWithRoom: room
+				statusCode: statusCode
+				  response: response
+				    client: client] autorelease];
+}
 
-@class MTXClient;
+- (instancetype)initWithRoom: (OFString *)room
+		  statusCode: (int)statusCode
+		    response: (mtx_response_t)response
+		      client: (MTXClient *)client
+{
+	self = [super initWithStatusCode: statusCode
+				response: response
+				  client: client];
 
-@interface MTXClientException: OFException
-@property (readonly, nonatomic) int statusCode;
-@property (readonly, nonatomic) mtx_response_t response;
-@property (readonly, nonatomic) MTXClient *client;
+	@try {
+		_room = [room copy];
+	} @catch (id e) {
+		[self release];
+		@throw e;
+	}
 
-+ (instancetype)exceptionWithStatusCode: (int)statusCode
-			       response: (mtx_response_t)response
-				 client: (MTXClient *)client;
-- (instancetype)initWithStatusCode: (int)statusCode
-			  response: (mtx_response_t)respons
-			    client: (MTXClient *)client
-    OF_DESIGNATED_INITIALIZER;
+	return self;
+}
+
+- (void)dealloc
+{
+	[_room release];
+
+	[super dealloc];
+}
+
+- (OFString *)description
+{
+	return [OFString stringWithFormat:
+	    @"Failed to join room %@ for %@: %@",
+	    _room, self.client.userID, self.response];
+}
 @end
-
-OF_ASSUME_NONNULL_END

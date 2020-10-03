@@ -22,24 +22,27 @@
 
 #import <ObjFW/ObjFW.h>
 
-#import "MTXRequest.h"
+#import "MTXClientException.h"
 
 OF_ASSUME_NONNULL_BEGIN
 
-@class MTXClient;
-
-@interface MTXClientException: OFException
-@property (readonly, nonatomic) int statusCode;
-@property (readonly, nonatomic) mtx_response_t response;
-@property (readonly, nonatomic) MTXClient *client;
+@interface MTXJoinRoomFailedException: MTXClientException
+@property (readonly, nonatomic) OFString *room;
 
 + (instancetype)exceptionWithStatusCode: (int)statusCode
 			       response: (mtx_response_t)response
-				 client: (MTXClient *)client;
+				 client: (MTXClient *)client OF_UNAVAILABLE;
++ (instancetype)exceptionWithRoom: (OFString *)room
+		       statusCode: (int)statusCode
+			 response: (mtx_response_t)response
+			   client: (MTXClient *)client;
 - (instancetype)initWithStatusCode: (int)statusCode
-			  response: (mtx_response_t)respons
-			    client: (MTXClient *)client
-    OF_DESIGNATED_INITIALIZER;
+			  response: (mtx_response_t)response
+			    client: (MTXClient *)client OF_UNAVAILABLE;
+- (instancetype)initWithRoom: (OFString *)room
+		  statusCode: (int)statusCode
+		    response: (mtx_response_t)response
+		      client: (MTXClient *)client;
 @end
 
 OF_ASSUME_NONNULL_END

@@ -25,25 +25,25 @@
 #import "MTXClient.h"
 
 @implementation MTXClientException
-+ (instancetype)exceptionWithClient: (MTXClient *)client
-			 statusCode: (int)statusCode
-			   response: (mtx_response_t)response
++ (instancetype)exceptionWithStatusCode: (int)statusCode
+			       response: (mtx_response_t)response
+				 client: (MTXClient *)client
 {
-	return [[[self alloc] initWithClient: client
-				  statusCode: statusCode
-				    response: response] autorelease];
+	return [[[self alloc] initWithStatusCode: statusCode
+					response: response
+					  client: client] autorelease];
 }
 
-- (instancetype)initWithClient: (MTXClient *)client
-		    statusCode: (int)statusCode
-		      response: (mtx_response_t)response
+- (instancetype)initWithStatusCode: (int)statusCode
+			  response: (mtx_response_t)response
+			    client: (MTXClient *)client
 {
 	self = [super init];
 
 	@try {
-		_client = [client retain];
 		_statusCode = statusCode;
 		_response = [response copy];
+		_client = [client retain];
 	} @catch (id e) {
 		[self release];
 		@throw e;
@@ -54,8 +54,8 @@
 
 - (void)dealloc
 {
-	[_client release];
 	[_response release];
+	[_client release];
 
 	[super dealloc];
 }

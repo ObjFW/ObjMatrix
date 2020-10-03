@@ -24,6 +24,7 @@
 #import "MTXRequest.h"
 
 #import "MTXFetchRoomListFailedException.h"
+#import "MTXJoinRoomFailedException.h"
 #import "MTXLoginFailedException.h"
 #import "MTXLogoutFailedException.h"
 
@@ -201,9 +202,9 @@ validateHomeserver(OFURL *homeserver)
 
 		if (statusCode != 200) {
 			block([MTXLogoutFailedException
-			    exceptionWithClient: self
-				     statusCode: statusCode
-				       response: response]);
+			    exceptionWithStatusCode: statusCode
+					   response: response
+					     client: self]);
 			return;
 		}
 
@@ -227,9 +228,9 @@ validateHomeserver(OFURL *homeserver)
 
 		if (statusCode != 200) {
 			block(nil, [MTXFetchRoomListFailedException
-			    exceptionWithClient: self
-				     statusCode: statusCode
-				       response: response]);
+			    exceptionWithStatusCode: statusCode
+					   response: response
+					     client: self]);
 			return;
 		}
 
@@ -247,6 +248,41 @@ validateHomeserver(OFURL *homeserver)
 		}
 
 		block(response[@"joined_rooms"], nil);
+	}];
+
+	objc_autoreleasePoolPop(pool);
+}
+
+- (void)joinRoom: (OFString *)room
+	   block: (mtx_client_room_join_block_t)block
+{
+	void *pool = objc_autoreleasePoolPush();
+	MTXRequest *request = [self requestWithPath:
+	    [OFString stringWithFormat: @"/_matrix/client/r0/join/%@", room]];
+	request.method = OF_HTTP_REQUEST_METHOD_POST;
+	[request performWithBlock: ^ (mtx_response_t response, int statusCode,
+				       id exception) {
+		if (exception != nil) {
+			block(nil, exception);
+			return;
+		}
+
+		if (statusCode != 200) {
+			block(nil, [MTXJoinRoomFailedException
+			    exceptionWithRoom: room
+				   statusCode: statusCode
+				     response: response
+				       client: self]);
+			return;
+		}
+
+		OFString *roomID = response[@"room_id"];
+		if (![roomID isKindOfClass: OFString.class]) {
+			block(nil, [OFInvalidServerReplyException exception]);
+			return;
+		}
+
+		block(roomID, nil);
 	}];
 
 	objc_autoreleasePoolPop(pool);

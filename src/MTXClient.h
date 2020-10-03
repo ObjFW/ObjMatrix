@@ -52,6 +52,16 @@ typedef void (^mtx_client_room_list_block_t)(
     OFArray<OFString *> *_Nullable rooms, id _Nullable exception);
 
 /**
+ * @brief A block called when a room was joined.
+ *
+ * @param roomID The room ID that was joined, or nil on error. This can be used
+ *		 to get the room ID if a room alias was joined.
+ * @param exception An exception if joining the room failed
+ */
+typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
+    id _Nullable exception);
+
+/**
  * @brief A class that represents a client.
  */
 @interface MTXClient: OFObject
@@ -124,6 +134,15 @@ typedef void (^mtx_client_room_list_block_t)(
  * @param block A block to call with the list of joined room
  */
 - (void)fetchRoomListWithBlock: (mtx_client_room_list_block_t)block;
+
+/**
+ * @brief Joins the specified room.
+ *
+ * @param room The room to join. Either a room ID or a room alias.
+ * @param block A block to call when the room was joined
+ */
+- (void)joinRoom: (OFString *)room
+	   block: (mtx_client_room_join_block_t)block;
 @end
 
 OF_ASSUME_NONNULL_END

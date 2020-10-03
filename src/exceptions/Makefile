@@ -5,6 +5,7 @@ STATIC_LIB_NOINST = ${EXCEPTIONS_A}
 
 SRCS = MTXClientException.m			\
        MTXFetchRoomListFailedException.m	\
+       MTXJoinRoomFailedException.m		\
        MTXLoginFailedException.m		\
        MTXLogoutFailedException.m
 INCLUDES = ${SRCS:.m=.h}

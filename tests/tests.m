@@ -74,6 +74,21 @@ OF_APPLICATION_DELEGATE(Tests)
 
 		of_log(@"Fetched room list: %@", rooms);
 
+		[self joinRoom];
+	}];
+}
+
+- (void)joinRoom
+{
+	[_client joinRoom: @"#test:nil.im"
+		    block: ^ (OFString *roomID, id exception) {
+		if (exception != nil) {
+			of_log(@"Failed to join room: %@", exception);
+			[OFApplication terminateWithStatus: 1];
+		}
+
+		of_log(@"Joined room %@", roomID);
+
 		[self logOut];
 	}];
 }
