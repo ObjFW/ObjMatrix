@@ -65,8 +65,8 @@ OF_APPLICATION_DELEGATE(Tests)
 
 - (void)fetchRoomList
 {
-	[_client asyncFetchRoomList: ^ (OFArray<OFString *> *rooms,
-					 id exception) {
+	[_client fetchRoomListWithBlock: ^ (OFArray<OFString *> *rooms,
+					     id exception) {
 		if (exception != nil) {
 			of_log(@"Failed to fetch room list: %@", exception);
 			[OFApplication terminateWithStatus: 1];
@@ -80,7 +80,7 @@ OF_APPLICATION_DELEGATE(Tests)
 
 - (void)logOut
 {
-	[_client asyncLogOutWithBlock: ^ (id exception) {
+	[_client logOutWithBlock: ^ (id exception) {
 		if (exception != nil) {
 			of_log(@"Failed to log out: %@\n", exception);
 			[OFApplication terminateWithStatus: 1];

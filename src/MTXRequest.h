@@ -106,7 +106,7 @@ typedef void (^mtx_request_block_t)(mtx_response_t _Nullable response,
  *
  * @param block The block to call once the request succeeded or failed
  */
-- (void)asyncPerformWithBlock: (mtx_request_block_t)block;
+- (void)performWithBlock: (mtx_request_block_t)block;
 @end
 
 OF_ASSUME_NONNULL_END

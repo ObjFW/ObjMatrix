@@ -87,7 +87,7 @@
 	    .objectByParsingJSON;
 }
 
-- (void)asyncPerformWithBlock: (mtx_request_block_t)block
+- (void)performWithBlock: (mtx_request_block_t)block
 {
 	void *pool = objc_autoreleasePoolPush();
 
