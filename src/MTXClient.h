@@ -62,6 +62,13 @@ typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
     id _Nullable exception);
 
 /**
+ * @brief A block called when a room was left.
+ *
+ * @param exception An exception if leaving the room failed
+ */
+typedef void (^mtx_client_room_leave_block_t)(id _Nullable exception);
+
+/**
  * @brief A class that represents a client.
  */
 @interface MTXClient: OFObject
@@ -143,6 +150,15 @@ typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
  */
 - (void)joinRoom: (OFString *)room
 	   block: (mtx_client_room_join_block_t)block;
+
+/**
+ * @brief Leaves the specified room.
+ *
+ * @param roomID The room ID to leave
+ * @param block A block to call when the room was left
+ */
+- (void)leaveRoom: (OFString *)roomID
+	    block: (mtx_client_room_leave_block_t)block;
 @end
 
 OF_ASSUME_NONNULL_END

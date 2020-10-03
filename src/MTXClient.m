@@ -25,6 +25,7 @@
 
 #import "MTXFetchRoomListFailedException.h"
 #import "MTXJoinRoomFailedException.h"
+#import "MTXLeaveRoomFailedException.h"
 #import "MTXLoginFailedException.h"
 #import "MTXLogoutFailedException.h"
 
@@ -283,6 +284,35 @@ validateHomeserver(OFURL *homeserver)
 		}
 
 		block(roomID, nil);
+	}];
+
+	objc_autoreleasePoolPop(pool);
+}
+
+- (void)leaveRoom: (OFString *)roomID
+	    block: (mtx_client_room_leave_block_t)block
+{
+	void *pool = objc_autoreleasePoolPush();
+	MTXRequest *request = [self requestWithPath: [OFString
+	    stringWithFormat: @"/_matrix/client/r0/rooms/%@/leave", roomID]];
+	request.method = OF_HTTP_REQUEST_METHOD_POST;
+	[request performWithBlock: ^ (mtx_response_t response, int statusCode,
+				       id exception) {
+		if (exception != nil) {
+			block(exception);
+			return;
+		}
+
+		if (statusCode != 200) {
+			block([MTXLeaveRoomFailedException
+			    exceptionWithRoomID: roomID
+				     statusCode: statusCode
+				       response: response
+					 client: self]);
+			return;
+		}
+
+		block(nil);
 	}];
 
 	objc_autoreleasePoolPop(pool);

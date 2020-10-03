@@ -20,11 +20,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "MTXClient.h"
-#import "MTXRequest.h"
+#import <ObjFW/ObjFW.h>
 
-#import "MTXFetchRoomListFailedException.h"
-#import "MTXJoinRoomFailedException.h"
-#import "MTXLeaveRoomFailedException.h"
-#import "MTXLoginFailedException.h"
-#import "MTXLogoutFailedException.h"
+#import "MTXClientException.h"
+
+OF_ASSUME_NONNULL_BEGIN
+
+@interface MTXLeaveRoomFailedException: MTXClientException
+@property (readonly, nonatomic) OFString *roomID;
+
++ (instancetype)exceptionWithStatusCode: (int)statusCode
+			       response: (mtx_response_t)response
+				 client: (MTXClient *)client OF_UNAVAILABLE;
++ (instancetype)exceptionWithRoomID: (OFString *)roomID
+			 statusCode: (int)statusCode
+			   response: (mtx_response_t)response
+			     client: (MTXClient *)client;
+- (instancetype)initWithStatusCode: (int)statusCode
+			  response: (mtx_response_t)response
+			    client: (MTXClient *)client OF_UNAVAILABLE;
+- (instancetype)initWithRoomID: (OFString *)roomID
+		    statusCode: (int)statusCode
+		      response: (mtx_response_t)response
+			client: (MTXClient *)client;
+@end
+
+OF_ASSUME_NONNULL_END

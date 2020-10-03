@@ -80,14 +80,30 @@ OF_APPLICATION_DELEGATE(Tests)
 
 - (void)joinRoom
 {
-	[_client joinRoom: @"#test:nil.im"
+	OFString *room = @"#test:nil.im";
+	[_client joinRoom: room
 		    block: ^ (OFString *roomID, id exception) {
 		if (exception != nil) {
-			of_log(@"Failed to join room: %@", exception);
+			of_log(@"Failed to join room %@: %@", room, exception);
 			[OFApplication terminateWithStatus: 1];
 		}
 
 		of_log(@"Joined room %@", roomID);
+
+		[self leaveRoom: roomID];
+	}];
+}
+
+- (void)leaveRoom: (OFString *)roomID
+{
+	[_client leaveRoom: roomID
+		     block: ^ (id exception) {
+		if (exception != nil) {
+			of_log(@"Failed to leave room %@: %@", exception);
+			[OFApplication terminateWithStatus: 1];
+		}
+
+		of_log(@"Left room %@", roomID);
 
 		[self logOut];
 	}];
