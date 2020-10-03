@@ -8,6 +8,8 @@ FRAMEWORK = ${OBJMATRIX_FRAMEWORK}
 LIB_MAJOR = ${OBJMATRIX_LIB_MAJOR}
 LIB_MINOR = ${OBJMATRIX_LIB_MINOR}
 
+SRCS = MTXClient.m	\
+       MTXRequest.m
 INCLUDES := ${SRCS:.m=.h}	\
 	    ObjMatrix.h
 
