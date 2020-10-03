@@ -9,13 +9,12 @@ It is currently in early development stages.
 
 ## How to build it?
 
-You need [ObjFW](https://objfw.nil.im),
-[ObjOpenSSL](https://fossil.nil.im/objopenssl) and
-[ObjSQLite3](https://fossil.nil.im/objsqlite3) installed in order to do this.
+You need [ObjFW](https://objfw.nil.im) and
+[ObjOpenSSL](https://fossil.nil.im/objopenssl) installed in order to do this.
 
 You can install them all like this:
 
-    $ for i in objfw objopenssl objsqlite3 objmatrix; do
+    $ for i in objfw objopenssl objmatrix; do
           fossil clone https://fossil.nil.im/$i $i.fossil &&
           mkdir $i &&
           cd $i &&
