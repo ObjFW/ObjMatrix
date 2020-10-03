@@ -157,6 +157,17 @@
   didFailWithException: (id)exception
 	       request: (OFHTTPRequest *)request
 {
+	/*
+	 * Convert OFHTTPRequestFailedException into a response, so that we
+	 * still get the JSON for the failed request.
+	 */
+	if ([exception isKindOfClass: OFHTTPRequestFailedException.class]) {
+		[self	       client: client
+		    didPerformRequest: request
+			     response: [exception response]];
+		return;
+	}
+
 	/* Reset to nil first, so that another one can be performed. */
 	mtx_request_block_t block = _block;
 	_block = nil;
