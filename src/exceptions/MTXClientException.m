@@ -20,13 +20,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <ObjFW/ObjFW.h>
+#import "MTXLogoutFailedException.h"
 
-#import "MTXClientException.h"
+#import "MTXClient.h"
 
-OF_ASSUME_NONNULL_BEGIN
+@implementation MTXClientException
++ (instancetype)exceptionWithClient: (MTXClient *)client
+			 statusCode: (int)statusCode
+			   response: (mtx_response_t)response
+{
+	return [[[self alloc] initWithClient: client
+				  statusCode: statusCode
+				    response: response] autorelease];
+}
 
-@interface MTXLogoutFailedException: MTXClientException
+- (instancetype)initWithClient: (MTXClient *)client
+		    statusCode: (int)statusCode
+		      response: (mtx_response_t)response
+{
+	self = [super init];
+
+	@try {
+		_client = [client retain];
+		_statusCode = statusCode;
+		_response = [response copy];
+	} @catch (id e) {
+		[self release];
+		@throw e;
+	}
+
+	return self;
+}
+
+- (void)dealloc
+{
+	[_client release];
+	[_response release];
+
+	[super dealloc];
+}
 @end
-
-OF_ASSUME_NONNULL_END

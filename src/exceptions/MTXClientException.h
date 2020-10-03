@@ -22,11 +22,23 @@
 
 #import <ObjFW/ObjFW.h>
 
-#import "MTXClientException.h"
+#import "MTXRequest.h"
 
 OF_ASSUME_NONNULL_BEGIN
 
-@interface MTXLogoutFailedException: MTXClientException
+@class MTXClient;
+
+@interface MTXClientException: OFException
+@property (readonly, nonatomic) MTXClient *client;
+@property (readonly, nonatomic) int statusCode;
+@property (readonly, nonatomic) mtx_response_t response;
+
++ (instancetype)exceptionWithClient: (MTXClient *)client
+			 statusCode: (int)statusCode
+			   response: (mtx_response_t)response;
+- (instancetype)initWithClient: (OFString *)user
+		    statusCode: (int)statusCode
+		      response: (mtx_response_t)response;
 @end
 
 OF_ASSUME_NONNULL_END

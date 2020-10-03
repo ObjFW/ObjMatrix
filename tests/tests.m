@@ -30,6 +30,10 @@
 OF_APPLICATION_DELEGATE(Tests)
 
 @implementation Tests
+{
+	MTXClient *_client;
+}
+
 - (void)applicationDidFinishLaunching
 {
 	__auto_type environment = OFApplication.environment;
@@ -52,18 +56,39 @@ OF_APPLICATION_DELEGATE(Tests)
 			[OFApplication terminateWithStatus: 1];
 		}
 
-		of_log(@"Logged in client: %@", client);
+		_client = [client retain];
+		of_log(@"Logged in client: %@", _client);
 
-		[client asyncLogOutWithBlock: ^ (id exception) {
-			if (exception != nil) {
-				of_log(@"Failed to log out: %@\n", exception);
-				[OFApplication terminateWithStatus: 1];
-			}
+		[self fetchRoomList];
+	}];
+}
 
-			of_log(@"Logged out client");
+- (void)fetchRoomList
+{
+	[_client asyncFetchRoomList: ^ (OFArray<OFString *> *rooms,
+					 id exception) {
+		if (exception != nil) {
+			of_log(@"Failed to fetch room list: %@", exception);
+			[OFApplication terminateWithStatus: 1];
+		}
 
-			[OFApplication terminate];
-		}];
+		of_log(@"Fetched room list: %@", rooms);
+
+		[self logOut];
+	}];
+}
+
+- (void)logOut
+{
+	[_client asyncLogOutWithBlock: ^ (id exception) {
+		if (exception != nil) {
+			of_log(@"Failed to log out: %@\n", exception);
+			[OFApplication terminateWithStatus: 1];
+		}
+
+		of_log(@"Logged out client");
+
+		[OFApplication terminate];
 	}];
 }
 @end

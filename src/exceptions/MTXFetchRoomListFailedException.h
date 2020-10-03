@@ -26,7 +26,7 @@
 
 OF_ASSUME_NONNULL_BEGIN
 
-@interface MTXLogoutFailedException: MTXClientException
+@interface MTXFetchRoomListFailedException: MTXClientException
 @end
 
 OF_ASSUME_NONNULL_END

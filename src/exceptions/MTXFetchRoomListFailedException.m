@@ -20,13 +20,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <ObjFW/ObjFW.h>
+#import "MTXFetchRoomListFailedException.h"
 
-#import "MTXClientException.h"
+#import "MTXClient.h"
 
-OF_ASSUME_NONNULL_BEGIN
-
-@interface MTXLogoutFailedException: MTXClientException
+@implementation MTXFetchRoomListFailedException
+- (OFString *)description
+{
+	return [OFString stringWithFormat:
+	    @"Failed to fetch room list for %@: %@",
+	    self.client.userID, self.response];
+}
 @end
-
-OF_ASSUME_NONNULL_END

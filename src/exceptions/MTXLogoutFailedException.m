@@ -25,44 +25,10 @@
 #import "MTXClient.h"
 
 @implementation MTXLogoutFailedException
-+ (instancetype)exceptionWithClient: (MTXClient *)client
-			 statusCode: (int)statusCode
-			   response: (mtx_response_t)response
-{
-	return [[[self alloc] initWithClient: client
-				  statusCode: statusCode
-				    response: response] autorelease];
-}
-
-- (instancetype)initWithClient: (MTXClient *)client
-		    statusCode: (int)statusCode
-		      response: (mtx_response_t)response
-{
-	self = [super init];
-
-	@try {
-		_client = [client retain];
-		_statusCode = statusCode;
-		_response = [response copy];
-	} @catch (id e) {
-		[self release];
-		@throw e;
-	}
-
-	return self;
-}
-
-- (void)dealloc
-{
-	[_client release];
-	[_response release];
-
-	[super dealloc];
-}
-
 - (OFString *)description
 {
 	return [OFString stringWithFormat:
-	    @"Failed to log out user %@: %@", _client.userID, _response];
+	    @"Failed to log out user %@: %@",
+	    self.client.userID, self.response];
 }
 @end

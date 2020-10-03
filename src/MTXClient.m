@@ -23,6 +23,7 @@
 #import "MTXClient.h"
 #import "MTXRequest.h"
 
+#import "MTXFetchRoomListFailedException.h"
 #import "MTXLoginFailedException.h"
 #import "MTXLogoutFailedException.h"
 
@@ -200,6 +201,32 @@ validateHomeserver(OFURL *homeserver)
 		}
 
 		block(nil);
+	}];
+
+	objc_autoreleasePoolPop(pool);
+}
+
+- (void)asyncFetchRoomList: (mtx_client_room_list_block_t)block
+{
+	void *pool = objc_autoreleasePoolPush();
+	MTXRequest *request =
+	    [self requestWithPath: @"/_matrix/client/r0/joined_rooms"];
+	[request asyncPerformWithBlock: ^ (mtx_response_t response,
+					    int statusCode, id exception) {
+		if (exception != nil) {
+			block(nil, exception);
+			return;
+		}
+
+		if (statusCode != 200 || response[@"joined_rooms"] == nil) {
+			block(nil, [MTXFetchRoomListFailedException
+			    exceptionWithClient: self
+				     statusCode: statusCode
+				       response: response]);
+			return;
+		}
+
+		block(response[@"joined_rooms"], nil);
 	}];
 
 	objc_autoreleasePoolPop(pool);

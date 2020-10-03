@@ -23,5 +23,6 @@
 #import "MTXClient.h"
 #import "MTXRequest.h"
 
+#import "MTXFetchRoomListFailedException.h"
 #import "MTXLoginFailedException.h"
 #import "MTXLogoutFailedException.h"

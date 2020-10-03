@@ -43,6 +43,15 @@ typedef void (^mtx_client_login_block_t)(MTXClient *_Nullable client,
 typedef void (^mtx_client_logout_block_t)(id _Nullable exception);
 
 /**
+ * @brief A block called when the room list was fetched.
+ *
+ * @param rooms An array of joined rooms, or nil on error
+ * @param exception An exception if fetching the room list failed
+ */
+typedef void (^mtx_client_room_list_block_t)(
+    OFArray<OFString *> *_Nullable rooms, id _Nullable exception);
+
+/**
  * @brief A class that represents a client.
  */
 @interface MTXClient: OFObject
@@ -105,9 +114,16 @@ typedef void (^mtx_client_logout_block_t)(id _Nullable exception);
  *
  * @warning The client can no longer be used after this succeeded!
  *
- * @param block The block to call when logging out succeeded or failed
+ * @param block A block to call when logging out succeeded or failed
  */
 - (void)asyncLogOutWithBlock: (mtx_client_logout_block_t)block;
+
+/**
+ * @brief Fetches the list of joined rooms.
+ *
+ * @param block A block to call with the list of joined room
+ */
+- (void)asyncFetchRoomList: (mtx_client_room_list_block_t)block;
 @end
 
 OF_ASSUME_NONNULL_END
