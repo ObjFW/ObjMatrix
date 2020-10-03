@@ -16,6 +16,17 @@ AS_IF([test x"$OBJFW_CONFIG" = x""], [
 	AC_MSG_ERROR(You need ObjFW and objfw-config installed!)
 ])
 
+AS_IF([$OBJFW_CONFIG --package ObjOpenSSL], [
+	OBJFW_CONFIG_FLAGS="$OBJFW_CONFIG_FLAGS --package ObjOpenSSL"
+], [
+	AC_MSG_ERROR(ObjOpenSSL not found!)
+])
+AS_IF([$OBJFW_CONFIG --package ObjSQLite3], [
+	OBJFW_CONFIG_FLAGS="$OBJFW_CONFIG_FLAGS --package ObjSQLite3"
+], [
+	AC_MSG_ERROR(ObjSQLite3 not found!)
+])
+
 test x"$OBJC" = x"" && OBJC="$($OBJFW_CONFIG --objc)"
 
 AC_LANG([Objective C])
@@ -25,11 +36,12 @@ AC_PROG_LN_S
 AC_PROG_INSTALL
 
 CPP="$OBJCPP"
-CPPFLAGS="$CPPFLAGS $OBJCPPFLAGS $($OBJFW_CONFIG --cppflags)"
-OBJCFLAGS="$OBJCFLAGS $($OBJFW_CONFIG --objcflags)"
-LDFLAGS="$LDFLAGS $($OBJFW_CONFIG --ldflags)"
-LIBS="$($OBJFW_CONFIG --libs) $LIBS"
-FRAMEWORK_LIBS="$($OBJFW_CONFIG --framework-libs) $LIBS"
+CPPFLAGS="$CPPFLAGS $OBJCPPFLAGS"
+CPPFLAGS="$CPPFLAGS $($OBJFW_CONFIG $OBJFW_CONFIG_FLAGS --cppflags)"
+OBJCFLAGS="$OBJCFLAGS $($OBJFW_CONFIG $OBJFW_CONFIG_FLAGS --objcflags)"
+LDFLAGS="$LDFLAGS $($OBJFW_CONFIG $OBJFW_CONFIG_FLAGS --ldflags)"
+FRAMEWORK_LIBS="$($OBJFW_CONFIG $OBJFW_CONFIG_FLAGS --framework-libs) $LIBS"
+LIBS="$($OBJFW_CONFIG $OBJFW_CONFIG_FLAGS --libs) $LIBS"
 
 AX_CHECK_COMPILER_FLAGS(-Wdocumentation,
 	[OBJCFLAGS="$OBJCFLAGS -Wdocumentation"])
@@ -88,28 +100,6 @@ AS_IF([test x"$GOBJC" = x"yes"], [
 		AC_MSG_RESULT(yes)
 		OBJCFLAGS="$old_OBJCFLAGS"
 	])
-])
-
-AS_IF([$OBJFW_CONFIG --package ObjOpenSSL], [
-	CPPFLAGS="$CPPFLAGS $($OBJFW_CONFIG --package ObjOpenSSL --cppflags)"
-	OBJCFLAGS="$OBJCFLAGS $($OBJFW_CONFIG --package ObjOpenSSL --objcflags)"
-	LIBS="$($OBJFW_CONFIG --package ObjOpenSSL --libs) $LIBS"
-	LDFLAGS="$($OBJFW_CONFIG --package ObjOpenSSL --ldflags) $LDFLAGS"
-	x="$($OBJFW_CONFIG --package ObjOpenSSL --framework-libs)"
-	FRAMEWORK_LIBS="$x $FRAMEWORK_LIBS"
-], [
-	AC_MSG_ERROR(ObjOpenSSL not found!)
-])
-
-AS_IF([$OBJFW_CONFIG --package ObjSQLite3], [
-	CPPFLAGS="$CPPFLAGS $($OBJFW_CONFIG --package ObjSQLite3 --cppflags)"
-	OBJCFLAGS="$OBJCFLAGS $($OBJFW_CONFIG --package ObjSQLite3 --objcflags)"
-	LIBS="$($OBJFW_CONFIG --package ObjSQLite3 --libs) $LIBS"
-	LDFLAGS="$($OBJFW_CONFIG --package ObjSQLite3 --ldflags) $LDFLAGS"
-	x="$($OBJFW_CONFIG --package ObjSQLite3 --framework-libs)"
-	FRAMEWORK_LIBS="$x $FRAMEWORK_LIBS"
-], [
-	AC_MSG_ERROR(ObjSQLite3 not found!)
 ])
 
 AS_IF([test x"$cross_compiling" = x"yes"], [
