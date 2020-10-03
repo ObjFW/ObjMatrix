@@ -40,6 +40,6 @@ run:
 
 ${PROG_NOINST}: ${LIBOBJMATRIX_DEP}
 
-CPPFLAGS += -I../src
+CPPFLAGS += -I../src -I../src/exceptions
 LIBS := -L../src -lobjmatrix ${LIBS}
 LD = ${OBJC}

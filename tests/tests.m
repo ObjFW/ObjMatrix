@@ -22,7 +22,7 @@
 
 #import <ObjFW/ObjFW.h>
 
-#import "MTXClient.h"
+#import "ObjMatrix.h"
 
 @interface Tests: OFObject <OFApplicationDelegate>
 @end
@@ -50,6 +50,10 @@ OF_APPLICATION_DELEGATE(Tests)
 		if (exception != nil) {
 			[of_stdout writeFormat: @"Error logging in: %@\n",
 						exception];
+			if ([exception isKindOfClass:
+			    MTXLoginFailedException.class])
+				[of_stdout writeFormat: @"Response: %@\n",
+							[exception response]];
 			[OFApplication terminateWithStatus: 1];
 		}
 

@@ -22,3 +22,5 @@
 
 #import "MTXClient.h"
 #import "MTXRequest.h"
+
+#import "MTXLoginFailedException.h"
