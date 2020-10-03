@@ -98,14 +98,21 @@ validateHomeserver(OFURL *homeserver)
 		OFString *userID = response[@"user_id"];
 		OFString *deviceID = response[@"device_id"];
 		OFString *accessToken = response[@"access_token"];
-		if (userID == nil || deviceID == nil ||
-		    accessToken == nil) {
+		if (![userID isKindOfClass: OFString.class] ||
+		    ![deviceID isKindOfClass: OFString.class] ||
+		    ![accessToken isKindOfClass: OFString.class]) {
 			block(nil, [OFInvalidServerReplyException exception]);
 			return;
 		}
 
 		OFString *baseURL =
 		    response[@"well_known"][@"m.homeserver"][@"base_url"];
+		if (baseURL != nil &&
+		    ![baseURL isKindOfClass: OFString.class]) {
+			block(nil, [OFInvalidServerReplyException exception]);
+			return;
+		}
+
 		OFURL *realHomeserver;
 		if (baseURL != nil) {
 			@try {
@@ -218,12 +225,25 @@ validateHomeserver(OFURL *homeserver)
 			return;
 		}
 
-		if (statusCode != 200 || response[@"joined_rooms"] == nil) {
+		if (statusCode != 200) {
 			block(nil, [MTXFetchRoomListFailedException
 			    exceptionWithClient: self
 				     statusCode: statusCode
 				       response: response]);
 			return;
+		}
+
+		OFArray<OFString *> *joinedRooms = response[@"joined_rooms"];
+		if (![joinedRooms isKindOfClass: OFArray.class]) {
+			block(nil, [OFInvalidServerReplyException exception]);
+			return;
+		}
+		for (OFString *room in joinedRooms) {
+			if (![room isKindOfClass: OFString.class]) {
+				block(nil,
+				    [OFInvalidServerReplyException exception]);
+				return;
+			}
 		}
 
 		block(response[@"joined_rooms"], nil);
