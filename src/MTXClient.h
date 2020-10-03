@@ -36,6 +36,13 @@ typedef void (^mtx_client_login_block_t)(MTXClient *_Nullable client,
     id _Nullable exception);
 
 /**
+ * @brief A block called when the device was logged out.
+ *
+ * @param exception `nil` on success, otherwise an exception
+ */
+typedef void (^mtx_client_logout_block_t)(id _Nullable exception);
+
+/**
  * @brief A class that represents a client.
  */
 @interface MTXClient: OFObject
@@ -92,6 +99,15 @@ typedef void (^mtx_client_login_block_t)(MTXClient *_Nullable client,
 		      deviceID: (OFString *)deviceID
 		   accessToken: (OFString *)accessToken
 		    homeserver: (OFURL *)homeserver OF_DESIGNATED_INITIALIZER;
+
+/**
+ * @brief Logs out the device and invalidates the access token.
+ *
+ * @warning The client can no longer be used after this succeeded!
+ *
+ * @param block The block to call when logging out succeeded or failed
+ */
+- (void)asyncLogOutWithBlock: (mtx_client_logout_block_t)block;
 @end
 
 OF_ASSUME_NONNULL_END

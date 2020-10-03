@@ -48,17 +48,22 @@ OF_APPLICATION_DELEGATE(Tests)
 		      homeserver: homeserver
 			   block: ^ (MTXClient *client, id exception) {
 		if (exception != nil) {
-			[of_stdout writeFormat: @"Error logging in: %@\n",
-						exception];
-			if ([exception isKindOfClass:
-			    MTXLoginFailedException.class])
-				[of_stdout writeFormat: @"Response: %@\n",
-							[exception response]];
+			of_log(@"Error logging in: %@", exception);
 			[OFApplication terminateWithStatus: 1];
 		}
 
-		[of_stdout writeFormat: @"Logged in client: %@\n", client];
-		[OFApplication terminate];
+		of_log(@"Logged in client: %@", client);
+
+		[client asyncLogOutWithBlock: ^ (id exception) {
+			if (exception != nil) {
+				of_log(@"Failed to log out: %@\n", exception);
+				[OFApplication terminateWithStatus: 1];
+			}
+
+			of_log(@"Logged out client");
+
+			[OFApplication terminate];
+		}];
 	}];
 }
 @end

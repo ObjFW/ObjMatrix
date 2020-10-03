@@ -24,6 +24,7 @@
 #import "MTXRequest.h"
 
 #import "MTXLoginFailedException.h"
+#import "MTXLogoutFailedException.h"
 
 static void
 validateHomeserver(OFURL *homeserver)
@@ -76,9 +77,8 @@ validateHomeserver(OFURL *homeserver)
 		@"password": password
 	};
 
-	[request asyncPerformWithBlock:
-	    ^ (OFDictionary<OFString *, id> *response, int statusCode,
-	    id exception) {
+	[request asyncPerformWithBlock: ^ (mtx_response_t response,
+					    int statusCode, id exception) {
 		if (exception != nil) {
 			block(nil, exception);
 			return;
@@ -169,5 +169,39 @@ validateHomeserver(OFURL *homeserver)
 	    @"\tHomeserver = %@\n"
 	    @">",
 	    self.class, _userID, _deviceID, _accessToken, _homeserver];
+}
+
+- (MTXRequest *)requestWithPath: (OFString *)path
+{
+	return [MTXRequest requestWithPath: path
+			       accessToken: _accessToken
+				homeserver: _homeserver];
+}
+
+- (void)asyncLogOutWithBlock: (mtx_client_logout_block_t)block
+{
+	void *pool = objc_autoreleasePoolPush();
+	MTXRequest *request =
+	    [self requestWithPath: @"/_matrix/client/r0/logout"];
+	request.method = OF_HTTP_REQUEST_METHOD_POST;
+	[request asyncPerformWithBlock: ^ (mtx_response_t response,
+					    int statusCode, id exception) {
+		if (exception != nil) {
+			block(exception);
+			return;
+		}
+
+		if (statusCode != 200) {
+			block([MTXLogoutFailedException
+			    exceptionWithClient: self
+				     statusCode: statusCode
+				       response: response]);
+			return;
+		}
+
+		block(nil);
+	}];
+
+	objc_autoreleasePoolPop(pool);
 }
 @end

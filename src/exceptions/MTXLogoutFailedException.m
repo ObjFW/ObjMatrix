@@ -20,26 +20,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <ObjFW/ObjFW.h>
+#import "MTXLogoutFailedException.h"
 
-#import "MTXRequest.h"
+#import "MTXClient.h"
 
-OF_ASSUME_NONNULL_BEGIN
+@implementation MTXLogoutFailedException
++ (instancetype)exceptionWithClient: (MTXClient *)client
+			 statusCode: (int)statusCode
+			   response: (mtx_response_t)response
+{
+	return [[[self alloc] initWithClient: client
+				  statusCode: statusCode
+				    response: response] autorelease];
+}
 
-@interface MTXLoginFailedException: OFException
-@property (readonly, nonatomic) OFString *user;
-@property (readonly, nonatomic) OFURL *homeserver;
-@property (readonly, nonatomic) int statusCode;
-@property (readonly, nonatomic) mtx_response_t response;
+- (instancetype)initWithClient: (MTXClient *)client
+		    statusCode: (int)statusCode
+		      response: (mtx_response_t)response
+{
+	self = [super init];
 
-+ (instancetype)exceptionWithUser: (OFString *)user
-		       homeserver: (OFURL *)homeserver
-		       statusCode: (int)statusCode
-			 response: (mtx_response_t)response;
-- (instancetype)initWithUser: (OFString *)user
-		  homeserver: (OFURL *)homeserver
-		  statusCode: (int)statusCode
-		    response: (mtx_response_t)response;
+	@try {
+		_client = [client retain];
+		_statusCode = statusCode;
+		_response = [response copy];
+	} @catch (id e) {
+		[self release];
+		@throw e;
+	}
+
+	return self;
+}
+
+- (void)dealloc
+{
+	[_client release];
+	[_response release];
+
+	[super dealloc];
+}
+
+- (OFString *)description
+{
+	return [OFString stringWithFormat:
+	    @"Failed to log out user %@: %@", _client.userID, _response];
+}
 @end
-
-OF_ASSUME_NONNULL_END

@@ -101,8 +101,8 @@
 	OFMutableDictionary *headers = [OFMutableDictionary dictionary];
 	headers[@"User-Agent"] = @"ObjMatrix";
 	if (_accessToken != nil)
-		headers[@"Authentication"] = [OFString
-		    stringWithFormat: @"Bearer %@", _accessToken];
+		headers[@"Authorization"] =
+		    [OFString stringWithFormat: @"Bearer %@", _accessToken];
 	if (_body != nil)
 		headers[@"Content-Length"] = @(_body.count).stringValue;
 
@@ -139,9 +139,9 @@
 					 count: length];
 		}
 
-		OFDictionary<OFString *, id> *responseJSON =
-		    [OFString stringWithUTF8String: responseData.items
-					    length: responseData.count]
+		mtx_response_t responseJSON = [OFString
+		    stringWithUTF8String: responseData.items
+				  length: responseData.count]
 		    .objectByParsingJSON;
 
 		block(responseJSON, response.statusCode, nil);

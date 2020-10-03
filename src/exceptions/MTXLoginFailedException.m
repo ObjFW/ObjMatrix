@@ -26,7 +26,7 @@
 + (instancetype)exceptionWithUser: (OFString *)user
 		       homeserver: (OFURL *)homeserver
 		       statusCode: (int)statusCode
-			 response: (OFDictionary<OFString *, id> *)response
+			 response: (mtx_response_t)response
 {
 	return [[[self alloc] initWithUser: user
 				homeserver: homeserver
@@ -37,7 +37,7 @@
 - (instancetype)initWithUser: (OFString *)user
 		  homeserver: (OFURL *)homeserver
 		  statusCode: (int)statusCode
-		    response: (OFDictionary<OFString *, id> *)response
+		    response: (mtx_response_t)response
 {
 	self = [super init];
 
@@ -61,5 +61,12 @@
 	[_response release];
 
 	[super dealloc];
+}
+
+- (OFString *)description
+{
+	return [OFString stringWithFormat:
+	    @"Failed to log in user %@ on %@: %@",
+	    _user, _homeserver, _response];
 }
 @end

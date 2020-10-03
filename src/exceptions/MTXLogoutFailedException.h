@@ -26,20 +26,19 @@
 
 OF_ASSUME_NONNULL_BEGIN
 
-@interface MTXLoginFailedException: OFException
-@property (readonly, nonatomic) OFString *user;
-@property (readonly, nonatomic) OFURL *homeserver;
+@class MTXClient;
+
+@interface MTXLogoutFailedException: OFException
+@property (readonly, nonatomic) MTXClient *client;
 @property (readonly, nonatomic) int statusCode;
 @property (readonly, nonatomic) mtx_response_t response;
 
-+ (instancetype)exceptionWithUser: (OFString *)user
-		       homeserver: (OFURL *)homeserver
-		       statusCode: (int)statusCode
-			 response: (mtx_response_t)response;
-- (instancetype)initWithUser: (OFString *)user
-		  homeserver: (OFURL *)homeserver
-		  statusCode: (int)statusCode
-		    response: (mtx_response_t)response;
++ (instancetype)exceptionWithClient: (MTXClient *)client
+			 statusCode: (int)statusCode
+			   response: (mtx_response_t)response;
+- (instancetype)initWithClient: (OFString *)user
+		    statusCode: (int)statusCode
+		      response: (mtx_response_t)response;
 @end
 
 OF_ASSUME_NONNULL_END

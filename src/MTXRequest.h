@@ -25,6 +25,13 @@
 OF_ASSUME_NONNULL_BEGIN
 
 /**
+ * @brief A response to a request.
+ *
+ * This is a typedef for `OFDictionary<OFString *, id> *`.
+ */
+typedef OFDictionary<OFString *, id> *mtx_response_t;
+
+/**
  * @brief A block called with the response for an MTXRequest.
  *
  * @param response The response to the request, as a dictionary parsed from JSON
@@ -32,9 +39,8 @@ OF_ASSUME_NONNULL_BEGIN
  * @param exception The first exception that occurred during the request,
  *		    or `nil` on success
  */
-typedef void (^mtx_request_block_t)(
-    OFDictionary<OFString *, id> *_Nullable response, int statusCode,
-    id _Nullable exception);
+typedef void (^mtx_request_block_t)(mtx_response_t _Nullable response,
+    int statusCode, id _Nullable exception);
 
 /**
  * @brief An internal class for performing a request on the Matrix server.

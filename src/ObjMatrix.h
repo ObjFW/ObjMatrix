@@ -24,3 +24,4 @@
 #import "MTXRequest.h"
 
 #import "MTXLoginFailedException.h"
+#import "MTXLogoutFailedException.h"
