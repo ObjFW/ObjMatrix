@@ -47,9 +47,12 @@ OF_APPLICATION_DELEGATE(Tests)
 	}
 
 	OFURL *homeserver = [OFURL URLWithString: environment[@"OBJMATRIX_HS"]];
+	id <MTXStorage> storage =
+	    [MTXSQLite3Storage storageWithPath: @"tests.db"];
 	[MTXClient logInWithUser: environment[@"OBJMATRIX_USER"]
 			password: environment[@"OBJMATRIX_PASS"]
 		      homeserver: homeserver
+			 storage: storage
 			   block: ^ (MTXClient *client, id exception) {
 		if (exception != nil) {
 			of_log(@"Error logging in: %@", exception);

@@ -21,6 +21,11 @@ AS_IF([$OBJFW_CONFIG --package ObjOpenSSL], [
 ], [
 	AC_MSG_ERROR(ObjOpenSSL not found!)
 ])
+AS_IF([$OBJFW_CONFIG --package ObjSQLite3], [
+	OBJFW_CONFIG_FLAGS="$OBJFW_CONFIG_FLAGS --package ObjSQLite3"
+], [
+	AC_MSG_ERROR(ObjSQLite3 not found!)
+])
 
 test x"$OBJC" = x"" && OBJC="$($OBJFW_CONFIG --objc)"
 

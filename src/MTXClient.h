@@ -22,6 +22,8 @@
 
 #import <ObjFW/ObjFW.h>
 
+#import "MTXStorage.h"
+
 OF_ASSUME_NONNULL_BEGIN
 
 @class MTXClient;
@@ -86,38 +88,59 @@ typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
 @property (readonly, nonatomic) OFURL *homeserver;
 
 /**
+ * @brief The storage used by the client.
+ */
+@property (readonly, nonatomic) id <MTXStorage> storage;
+
+/**
  * @brief Creates a new client with the specified access token on the specified
  *	  homeserver.
  *
+ * @param userID The user ID for the client
+ * @param deviceID The device ID for the client
  * @param accessToken The access token for the client
  * @param homeserver The URL of the homeserver
+ * @param storage The storage the client should use
  * @return An autoreleased MTXClient
  */
 + (instancetype)clientWithUserID: (OFString *)userID
 			deviceID: (OFString *)deviceID
 		     accessToken: (OFString *)accessToken
-		      homeserver: (OFURL *)homeserver;
+		      homeserver: (OFURL *)homeserver
+			 storage: (id <MTXStorage>)storage;
 
 /**
  * @brief Logs into the homeserver and creates a new client.
+ *
+ * @param user The user to log into
+ * @param password The password to log in with
+ * @param homeserver The homeserver to log into
+ * @param storage The storage the client should use
+ * @param block A block to call once login succeeded or failed
  */
 + (void)logInWithUser: (OFString *)user
 	     password: (OFString *)password
 	   homeserver: (OFURL *)homeserver
+	      storage: (id <MTXStorage>)storage
 		block: (mtx_client_login_block_t)block;
 
 /**
  * @brief Initializes an already allocated client with the specified access
  *	  token on the specified homeserver.
  *
+ * @param userID The user ID for the client
+ * @param deviceID The device ID for the client
  * @param accessToken The access token for the client
  * @param homeserver The URL of the homeserver
+ * @param storage The storage the client should use
  * @return An initialized MTXClient
  */
 - (instancetype)initWithUserID: (OFString *)userID
 		      deviceID: (OFString *)deviceID
 		   accessToken: (OFString *)accessToken
-		    homeserver: (OFURL *)homeserver OF_DESIGNATED_INITIALIZER;
+		    homeserver: (OFURL *)homeserver
+		       storage: (id <MTXStorage>)storage
+    OF_DESIGNATED_INITIALIZER;
 
 /**
  * @brief Logs out the device and invalidates the access token.

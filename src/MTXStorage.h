@@ -20,13 +20,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "MTXClient.h"
-#import "MTXRequest.h"
-#import "MTXSQLite3Storage.h"
-#import "MTXStorage.h"
+#import <ObjFW/ObjFW.h>
 
-#import "MTXFetchRoomListFailedException.h"
-#import "MTXJoinRoomFailedException.h"
-#import "MTXLeaveRoomFailedException.h"
-#import "MTXLoginFailedException.h"
-#import "MTXLogoutFailedException.h"
+OF_ASSUME_NONNULL_BEGIN
+
+/**
+ * @brief A protocol for a storage to be used by @ref MTXClient.
+ */
+@protocol MTXStorage <OFObject>
+@end
+
+OF_ASSUME_NONNULL_END

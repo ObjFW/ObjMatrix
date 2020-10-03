@@ -20,13 +20,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "MTXClient.h"
-#import "MTXRequest.h"
-#import "MTXSQLite3Storage.h"
 #import "MTXStorage.h"
 
-#import "MTXFetchRoomListFailedException.h"
-#import "MTXJoinRoomFailedException.h"
-#import "MTXLeaveRoomFailedException.h"
-#import "MTXLoginFailedException.h"
-#import "MTXLogoutFailedException.h"
+OF_ASSUME_NONNULL_BEGIN
+
+/**
+ * @brief SQLite3-based storage for @ref MTXClient.
+ */
+@interface MTXSQLite3Storage: OFObject <MTXStorage>
+/**
+ * @brief Creates a new SQLite3-based storage for @ref MTXClient.
+ *
+ * @param path The path for the SQLite3 database
+ * @return An autoreleased MTXSQLite3Storage
+ */
++ (instancetype)storageWithPath: (OFString *)path;
+
+/**
+ * @brief Initializes an already allocated MTXSQLite3Storage.
+ *
+ * @param path The path for the SQLite3 database
+ * @return An initialized MTXSQLite3Storage
+ */
+- (instancetype)initWithPath: (OFString *)path OF_DESIGNATED_INITIALIZER;
+@end
+
+OF_ASSUME_NONNULL_END

@@ -51,16 +51,19 @@ validateHomeserver(OFURL *homeserver)
 			deviceID: (OFString *)deviceID
 		     accessToken: (OFString *)accessToken
 		      homeserver: (OFURL *)homeserver
+			 storage: (id <MTXStorage>)storage
 {
 	return [[[self alloc] initWithUserID: userID
 				    deviceID: deviceID
 				 accessToken: accessToken
-				  homeserver: homeserver] autorelease];
+				  homeserver: homeserver
+				     storage: storage] autorelease];
 }
 
 + (void)logInWithUser: (OFString *)user
 	     password: (OFString *)password
 	   homeserver: (OFURL *)homeserver
+	      storage: (id <MTXStorage>)storage
 		block: (mtx_client_login_block_t)block
 {
 	void *pool = objc_autoreleasePoolPush();
@@ -127,11 +130,11 @@ validateHomeserver(OFURL *homeserver)
 		} else
 			realHomeserver = homeserver;
 
-		MTXClient *client = [MTXClient
-		    clientWithUserID: userID
-			    deviceID: deviceID
-			 accessToken: accessToken
-			  homeserver: realHomeserver];
+		MTXClient *client = [MTXClient clientWithUserID: userID
+						       deviceID: deviceID
+						    accessToken: accessToken
+						     homeserver: realHomeserver
+							storage: storage];
 		block(client, nil);
 	}];
 
@@ -142,6 +145,7 @@ validateHomeserver(OFURL *homeserver)
 		      deviceID: (OFString *)deviceID
 		   accessToken: (OFString *)accessToken
 		    homeserver: (OFURL *)homeserver
+		       storage: (id <MTXStorage>)storage
 {
 	self = [super init];
 
@@ -152,6 +156,7 @@ validateHomeserver(OFURL *homeserver)
 		_deviceID = [deviceID copy];
 		_accessToken = [accessToken copy];
 		_homeserver = [homeserver copy];
+		_storage = [storage retain];
 	} @catch (id e) {
 		[self release];
 		@throw e;
@@ -166,6 +171,7 @@ validateHomeserver(OFURL *homeserver)
 	[_deviceID release];
 	[_accessToken release];
 	[_homeserver release];
+	[_storage release];
 
 	[super dealloc];
 }

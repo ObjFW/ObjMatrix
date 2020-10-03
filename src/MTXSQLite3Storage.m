@@ -20,13 +20,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "MTXClient.h"
-#import "MTXRequest.h"
-#import "MTXSQLite3Storage.h"
-#import "MTXStorage.h"
+#import <ObjSQLite3/ObjSQLite3.h>
 
-#import "MTXFetchRoomListFailedException.h"
-#import "MTXJoinRoomFailedException.h"
-#import "MTXLeaveRoomFailedException.h"
-#import "MTXLoginFailedException.h"
-#import "MTXLogoutFailedException.h"
+#import "MTXSQLite3Storage.h"
+
+@implementation MTXSQLite3Storage
+{
+	SL3Connection *_conn;
+}
+
++ (instancetype)storageWithPath: (OFString *)path
+{
+	return [[[self alloc] initWithPath: path] autorelease];
+}
+
+- (instancetype)initWithPath: (OFString *)path
+{
+	self = [super init];
+
+	@try {
+		_conn = [[SL3Connection alloc] initWithPath: path];
+	} @catch (id e) {
+		[self release];
+		@throw e;
+	}
+
+	return self;
+}
+
+- (void)dealloc
+{
+	[_conn release];
+
+	[super dealloc];
+}
+@end
