@@ -219,6 +219,20 @@ validateHomeserver(OFURL *homeserver)
 			return;
 		}
 
+		OFString *nextBatch = response[@"next_batch"];
+		if (![nextBatch isKindOfClass: OFString.class]) {
+			block([OFInvalidServerReplyException exception]);
+			return;
+		}
+
+		@try {
+			[_storage setNextBatch: nextBatch
+				   forDeviceID: _deviceID];
+		} @catch (id e) {
+			block(e);
+			return;
+		}
+
 		block(nil);
 	}];
 

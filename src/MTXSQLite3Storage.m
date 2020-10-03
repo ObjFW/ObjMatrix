@@ -27,6 +27,7 @@
 @implementation MTXSQLite3Storage
 {
 	SL3Connection *_conn;
+	SL3PreparedStatement *_nextBatchSetStatement, *_nextBatchGetStatement;
 }
 
 + (instancetype)storageWithPath: (OFString *)path
@@ -39,7 +40,23 @@
 	self = [super init];
 
 	@try {
+		void *pool = objc_autoreleasePoolPush();
+
 		_conn = [[SL3Connection alloc] initWithPath: path];
+
+		[self createTables];
+
+		_nextBatchSetStatement = [[_conn prepareStatement:
+		    @"INSERT OR REPLACE INTO next_batch (\n"
+		    @"    device_id, next_batch\n"
+		    @") VALUES (\n"
+		    @"    $device_id, $next_batch\n"
+		    @")"] retain];
+		_nextBatchGetStatement = [[_conn prepareStatement:
+		    @"SELECT next_batch FROM next_batch\n"
+		    @"WHERE device_id=$device_id"] retain];
+
+		objc_autoreleasePoolPop(pool);
 	} @catch (id e) {
 		[self release];
 		@throw e;
@@ -50,8 +67,53 @@
 
 - (void)dealloc
 {
+	[_nextBatchSetStatement release];
+	[_nextBatchGetStatement release];
 	[_conn release];
 
 	[super dealloc];
+}
+
+- (void)createTables
+{
+	[_conn executeStatement: @"CREATE TABLE IF NOT EXISTS next_batch (\n"
+				 @"    device_id TEXT PRIMARY KEY,\n"
+				 @"    next_batch TEXT\n"
+				 @")"];
+}
+
+- (void)setNextBatch: (OFString *)nextBatch
+	 forDeviceID: (OFString *)deviceID
+{
+	void *pool = objc_autoreleasePoolPush();
+
+	[_nextBatchSetStatement reset];
+	[_nextBatchSetStatement bindWithDictionary: @{
+		@"$device_id": deviceID,
+		@"$next_batch": nextBatch
+	}];
+	[_nextBatchSetStatement step];
+
+	objc_autoreleasePoolPop(pool);
+}
+
+- (OFString *)nextBatchForDeviceID: (OFString *)deviceID
+{
+	void *pool = objc_autoreleasePoolPush();
+
+	[_nextBatchGetStatement reset];
+	[_nextBatchGetStatement bindWithDictionary: @{
+		@"$device_id": deviceID
+	}];
+
+	if (![_nextBatchGetStatement step])
+		return nil;
+
+	OFString *nextBatch =
+	    [[_nextBatchGetStatement rowDictionary][@"next_batch"] retain];
+
+	objc_autoreleasePoolPop(pool);
+
+	return [nextBatch autorelease];
 }
 @end

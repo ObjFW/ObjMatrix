@@ -28,6 +28,23 @@ OF_ASSUME_NONNULL_BEGIN
  * @brief A protocol for a storage to be used by @ref MTXClient.
  */
 @protocol MTXStorage <OFObject>
+/**
+ * @brief Stores the next batch for the specified device.
+ *
+ * @param nextBatch The next batch for the device
+ * @param deviceID The device for which to store the next batch
+ */
+- (void)setNextBatch: (OFString *)nextBatch
+	 forDeviceID: (OFString *)deviceID;
+
+/**
+ * @brief Returns the next batch for the specified device.
+ *
+ * @param deviceID The device ID for which to return the next batch
+ * @return The next batch for the specified device, or `nil` if none is
+ *	   available.
+ */
+- (nullable OFString *)nextBatchForDeviceID: (OFString *)deviceID;
 @end
 
 OF_ASSUME_NONNULL_END
