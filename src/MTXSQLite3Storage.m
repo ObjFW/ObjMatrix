@@ -82,6 +82,11 @@
 				 @")"];
 }
 
+- (void)transactionWithBlock: (mtx_storage_transaction_block_t)block
+{
+	[_conn transactionWithBlock: block];
+}
+
 - (void)setNextBatch: (OFString *)nextBatch
 	 forDeviceID: (OFString *)deviceID
 {

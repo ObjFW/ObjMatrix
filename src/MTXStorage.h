@@ -25,9 +25,22 @@
 OF_ASSUME_NONNULL_BEGIN
 
 /**
+ * @brief A block which will be treated as a single transaction for the storage.
+ *
+ * @return Whether the transaction should be committed (`true`) or rolled back
+ *	   (`false`).
+ */
+typedef bool (^mtx_storage_transaction_block_t)(void);
+
+/**
  * @brief A protocol for a storage to be used by @ref MTXClient.
  */
 @protocol MTXStorage <OFObject>
+/**
+ * @brief Performs all operations inside the block as a transaction.
+ */
+- (void)transactionWithBlock: (mtx_storage_transaction_block_t)block;
+
 /**
  * @brief Stores the next batch for the specified device.
  *
