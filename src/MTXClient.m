@@ -203,7 +203,11 @@ validateHomeserver(OFURL *homeserver)
 	MTXRequest *request = [self
 	    requestWithPath: @"/_matrix/client/r0/sync"];
 	unsigned long long timeoutMs = timeout * 1000;
-	request.query = [OFString stringWithFormat: @"timeout=%llu", timeoutMs];
+	OFMutableDictionary<OFString *, OFString *> *query =
+	    [OFMutableDictionary dictionaryWithObject: @(timeoutMs).stringValue
+					       forKey: @"timeout"];
+	query[@"since"] = [_storage nextBatchForDeviceID: _deviceID];
+	request.query = query;
 	[request performWithBlock: ^ (mtx_response_t response, int statusCode,
 				       id exception) {
 		if (exception != nil) {

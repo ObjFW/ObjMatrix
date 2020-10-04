@@ -73,7 +73,8 @@ typedef void (^mtx_request_block_t)(mtx_response_t _Nullable response,
 /**
  * @brief The query for the request.
  */
-@property (copy, nullable, nonatomic) OFString *query;
+@property (copy, nullable, nonatomic)
+    OFDictionary<OFString *, OFString *> *query;
 
 /**
  * @brief An optional body to send along with the request.
