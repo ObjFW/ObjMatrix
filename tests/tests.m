@@ -32,6 +32,7 @@ OF_APPLICATION_DELEGATE(Tests)
 @implementation Tests
 {
 	MTXClient *_client;
+	OFString *_roomID;
 }
 
 - (void)applicationDidFinishLaunching
@@ -106,39 +107,55 @@ OF_APPLICATION_DELEGATE(Tests)
 			[OFApplication terminateWithStatus: 1];
 		}
 
-		of_log(@"Joined room %@", roomID);
+		_roomID = [roomID copy];
+		of_log(@"Joined room %@", _roomID);
 
-		[self sendMessage: roomID];
+		[self sync2];
 	}];
 }
 
-- (void)sendMessage: (OFString *)roomID
+- (void)sync2
 {
-	[_client sendMessage: @"ObjMatrix test successful!"
-		      roomID: roomID
-		       block: ^ (id exception) {
+	[_client syncWithTimeout: 5
+			   block: ^ (id exception) {
 		if (exception != nil) {
-			of_log(@"Failed to send message to room %@: %@",
-			    roomID, exception);
+			of_log(@"Failed to sync: %@", exception);
 			[OFApplication terminateWithStatus: 1];
 		}
 
-		of_log(@"Message sent to %@", roomID);
+		of_log(@"Synced");
 
-		[self leaveRoom: roomID];
+		[self sendMessage];
 	}];
 }
 
-- (void)leaveRoom: (OFString *)roomID
+- (void)sendMessage
 {
-	[_client leaveRoom: roomID
+	[_client sendMessage: @"ObjMatrix test successful!"
+		      roomID: _roomID
+		       block: ^ (id exception) {
+		if (exception != nil) {
+			of_log(@"Failed to send message to room %@: %@",
+			    _roomID, exception);
+			[OFApplication terminateWithStatus: 1];
+		}
+
+		of_log(@"Message sent to %@", _roomID);
+
+		[self leaveRoom];
+	}];
+}
+
+- (void)leaveRoom
+{
+	[_client leaveRoom: _roomID
 		     block: ^ (id exception) {
 		if (exception != nil) {
 			of_log(@"Failed to leave room %@: %@", exception);
 			[OFApplication terminateWithStatus: 1];
 		}
 
-		of_log(@"Left room %@", roomID);
+		of_log(@"Left room %@", _roomID);
 
 		[self logOut];
 	}];

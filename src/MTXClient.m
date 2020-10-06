@@ -230,8 +230,20 @@ validateHomeserver(OFURL *homeserver)
 		}
 
 		@try {
-			[_storage setNextBatch: nextBatch
-				   forDeviceID: _deviceID];
+			[_storage transactionWithBlock: ^ {
+				[_storage setNextBatch: nextBatch
+					   forDeviceID: _deviceID];
+
+				[self processRoomsSync: response[@"rooms"]];
+				[self processPresenceSync:
+				    response[@"presence"]];
+				[self processAccountDataSync:
+				    response[@"account_data"]];
+				[self processToDeviceSync:
+				    response[@"to_device"]];
+
+				return true;
+			}];
 		} @catch (id e) {
 			block(e);
 			return;
@@ -407,5 +419,21 @@ validateHomeserver(OFURL *homeserver)
 	}];
 
 	objc_autoreleasePoolPop(pool);
+}
+
+- (void)processRoomsSync: (OFDictionary<OFString *, id> *)rooms
+{
+}
+
+- (void)processPresenceSync: (OFDictionary<OFString *, id> *)presence
+{
+}
+
+- (void)processAccountDataSync: (OFDictionary<OFString *, id> *)accountData
+{
+}
+
+- (void)processToDeviceSync: (OFDictionary<OFString *, id> *)toDevice
+{
 }
 @end
