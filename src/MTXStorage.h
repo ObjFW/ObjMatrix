@@ -58,6 +58,34 @@ typedef bool (^mtx_storage_transaction_block_t)(void);
  *	   available.
  */
 - (nullable OFString *)nextBatchForDeviceID: (OFString *)deviceID;
+
+/**
+ * @brief Adds the specified room ID to the list of joined rooms for the
+ *	  specified user ID.
+ *
+ * @param roomID The room ID to add to the list of joined rooms
+ * @param userID The user ID for which to add the room
+ */
+- (void)addJoinedRoom: (OFString *)roomID
+	      forUser: (OFString *)userID;
+
+/**
+ * @brief Removes the specified room ID to the list of joined rooms for the
+ *	  specified user ID.
+ *
+ * @param roomID The room ID to add to the list of joined rooms
+ * @param userID The user ID for which to add the room
+ */
+- (void)removeJoinedRoom: (OFString *)roomID
+		 forUser: (OFString *)userID;
+
+/**
+ * @brief Returns the joined room IDs for the specified user ID.
+ *
+ * @param userID The user ID for which to return the joined rooms
+ * @return The joined room IDs for the specified user ID
+ */
+- (OFArray<OFString *> *)joinedRoomsForUser: (OFString *)userID;
 @end
 
 OF_ASSUME_NONNULL_END
