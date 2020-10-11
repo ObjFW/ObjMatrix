@@ -59,7 +59,7 @@
 		    @"SELECT next_batch FROM next_batch\n"
 		    @"WHERE device_id=$device_id"] retain];
 		_joinedRoomsAddStatement = [[_conn prepareStatement:
-		    @"INSERT INTO joined_rooms (\n"
+		    @"INSERT OR REPLACE INTO joined_rooms (\n"
 		    @"    user_id, room_id\n"
 		    @") VALUES (\n"
 		    @"    $user_id, $room_id\n"

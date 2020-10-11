@@ -423,6 +423,9 @@ validateHomeserver(OFURL *homeserver)
 
 - (void)processRoomsSync: (OFDictionary<OFString *, id> *)rooms
 {
+	[self processJoinedRooms: rooms[@"join"]];
+	[self processInvitedRooms: rooms[@"invite"]];
+	[self processLeftRooms: rooms[@"leave"]];
 }
 
 - (void)processPresenceSync: (OFDictionary<OFString *, id> *)presence
@@ -435,5 +438,31 @@ validateHomeserver(OFURL *homeserver)
 
 - (void)processToDeviceSync: (OFDictionary<OFString *, id> *)toDevice
 {
+}
+
+- (void)processJoinedRooms: (OFDictionary<OFString *, id> *)rooms
+{
+	if (rooms == nil)
+		return;
+
+	for (OFString *roomID in rooms)
+		[_storage addJoinedRoom: roomID
+				forUser: _userID];
+}
+
+- (void)processInvitedRooms: (OFDictionary<OFString *, id> *)rooms
+{
+	if (rooms == nil)
+		return;
+}
+
+- (void)processLeftRooms: (OFDictionary<OFString *, id> *)rooms
+{
+	if (rooms == nil)
+		return;
+
+	for (OFString *roomID in rooms)
+		[_storage removeJoinedRoom: roomID
+				   forUser: _userID];
 }
 @end
