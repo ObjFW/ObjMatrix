@@ -124,56 +124,39 @@
 -      (void)client: (OFHTTPClient *)client
   didPerformRequest: (OFHTTPRequest *)request
 	   response: (OFHTTPResponse *)response
+	  exception: (id)exception
 {
+	if (response != nil &&
+	    [exception isKindOfClass: [OFHTTPRequestFailedException class]])
+		exception = nil;
+
 	/* Reset to nil first, so that another one can be performed. */
 	mtx_request_block_t block = _block;
 	_block = nil;
 
-	@try {
-		OFMutableData *responseData = [OFMutableData data];
-		while (!response.atEndOfStream) {
-			char buffer[512];
-			size_t length = [response readIntoBuffer: buffer
-							  length: 512];
+	if (exception == nil) {
+		@try {
+			OFMutableData *responseData = [OFMutableData data];
+			while (!response.atEndOfStream) {
+				char buffer[512];
+				size_t length = [response readIntoBuffer: buffer
+								  length: 512];
 
-			[responseData addItems: buffer
-					 count: length];
+				[responseData addItems: buffer
+						 count: length];
+			}
+
+			mtx_response_t responseJSON = [OFString
+			    stringWithUTF8String: responseData.items
+					  length: responseData.count]
+			    .objectByParsingJSON;
+
+			block(responseJSON, response.statusCode, nil);
+		} @catch (id e) {
+			block(nil, response.statusCode, e);
 		}
-
-		mtx_response_t responseJSON = [OFString
-		    stringWithUTF8String: responseData.items
-				  length: responseData.count]
-		    .objectByParsingJSON;
-
-		block(responseJSON, response.statusCode, nil);
-	} @catch (id e) {
-		block(nil, response.statusCode, e);
-	}
-
-	[block release];
-	[self release];
-}
-
--	  (void)client: (OFHTTPClient *)client
-  didFailWithException: (id)exception
-	       request: (OFHTTPRequest *)request
-{
-	/*
-	 * Convert OFHTTPRequestFailedException into a response, so that we
-	 * still get the JSON for the failed request.
-	 */
-	if ([exception isKindOfClass: OFHTTPRequestFailedException.class]) {
-		[self	       client: client
-		    didPerformRequest: request
-			     response: [exception response]];
-		return;
-	}
-
-	/* Reset to nil first, so that another one can be performed. */
-	mtx_request_block_t block = _block;
-	_block = nil;
-
-	block(nil, 0, exception);
+	} else
+		block(nil, 0, exception);
 
 	[block release];
 	[self release];
