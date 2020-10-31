@@ -45,6 +45,13 @@ typedef void (^mtx_client_login_block_t)(MTXClient *_Nullable client,
 typedef void (^mtx_client_response_block_t)(id _Nullable exception);
 
 /**
+ * @brief A block called when an exception occurred during sync.
+ *
+ * @param exception The exception which occurred during sync
+ */
+typedef void (^mtx_sync_exception_handler_block_t)(id exception);
+
+/**
  * @brief A block called when the room list was fetched.
  *
  * @param rooms An array of joined rooms, or nil on error
@@ -91,6 +98,19 @@ typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
  * @brief The storage used by the client.
  */
 @property (readonly, nonatomic) id <MTXStorage> storage;
+
+/**
+ * @brief The timeout for sync requests.
+ *
+ * Defaults to 5 minutes.
+ */
+@property (nonatomic) of_time_interval_t syncTimeout;
+
+/**
+ * @brief A block to handle exceptions that occurred during sync.
+ */
+@property (copy, nonatomic)
+    mtx_sync_exception_handler_block_t syncExceptionHandler;
 
 /**
  * @brief Creates a new client with the specified access token on the specified
@@ -143,12 +163,17 @@ typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
     OF_DESIGNATED_INITIALIZER;
 
 /**
- * @brief Performs a sync.
- *
- * @param block A block to call when a sync was performed
+ * @brief Starts the sync loop.
  */
-- (void)syncWithTimeout: (of_time_interval_t)timeout
-		  block: (mtx_client_response_block_t)block;
+- (void)startSyncLoop;
+
+/**
+ * @brief Stops the sync loop.
+ *
+ * The currently waiting sync is not aborted, but after it returns, no new sync
+ * will be started.
+ */
+- (void)stopSyncLoop;
 
 /**
  * @brief Logs out the device and invalidates the access token.

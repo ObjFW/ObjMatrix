@@ -48,6 +48,10 @@ validateHomeserver(OFURL *homeserver)
 }
 
 @implementation MTXClient
+{
+	bool _syncing;
+}
+
 + (instancetype)clientWithUserID: (OFString *)userID
 			deviceID: (OFString *)deviceID
 		     accessToken: (OFString *)accessToken
@@ -158,6 +162,7 @@ validateHomeserver(OFURL *homeserver)
 		_accessToken = [accessToken copy];
 		_homeserver = [homeserver copy];
 		_storage = [storage retain];
+		_syncTimeout = 300;
 	} @catch (id e) {
 		[self release];
 		@throw e;
@@ -196,13 +201,17 @@ validateHomeserver(OFURL *homeserver)
 				homeserver: _homeserver];
 }
 
-- (void)syncWithTimeout: (of_time_interval_t)timeout
-		  block: (mtx_client_response_block_t)block
+- (void)startSyncLoop
 {
+	if (_syncing)
+		return;
+
+	_syncing = true;
+
 	void *pool = objc_autoreleasePoolPush();
 	MTXRequest *request = [self
 	    requestWithPath: @"/_matrix/client/r0/sync"];
-	unsigned long long timeoutMs = timeout * 1000;
+	unsigned long long timeoutMs = _syncTimeout * 1000;
 	OFMutableDictionary<OFString *, OFString *> *query =
 	    [OFMutableDictionary dictionaryWithObject: @(timeoutMs).stringValue
 					       forKey: @"timeout"];
@@ -211,21 +220,25 @@ validateHomeserver(OFURL *homeserver)
 	[request performWithBlock: ^ (mtx_response_t response, int statusCode,
 				       id exception) {
 		if (exception != nil) {
-			block(exception);
+			if (_syncExceptionHandler != NULL)
+				_syncExceptionHandler(exception);
 			return;
 		}
 
 		if (statusCode != 200) {
-			block([MTXSyncFailedException
-			    exceptionWithStatusCode: statusCode
-					   response: response
-					     client: self]);
+			if (_syncExceptionHandler != NULL)
+				_syncExceptionHandler([MTXSyncFailedException
+				    exceptionWithStatusCode: statusCode
+						   response: response
+						     client: self]);
 			return;
 		}
 
 		OFString *nextBatch = response[@"next_batch"];
 		if (![nextBatch isKindOfClass: OFString.class]) {
-			block([OFInvalidServerReplyException exception]);
+			if (_syncExceptionHandler != NULL)
+				_syncExceptionHandler(
+				    [OFInvalidServerReplyException exception]);
 			return;
 		}
 
@@ -245,14 +258,21 @@ validateHomeserver(OFURL *homeserver)
 				return true;
 			}];
 		} @catch (id e) {
-			block(e);
+			if (_syncExceptionHandler != NULL)
+				_syncExceptionHandler(e);
 			return;
 		}
 
-		block(nil);
+		if (_syncing)
+			[self startSyncLoop];
 	}];
 
 	objc_autoreleasePoolPop(pool);
+}
+
+- (void)stopSyncLoop
+{
+	_syncing = false;
 }
 
 - (void)logOutWithBlock: (mtx_client_response_block_t)block

@@ -63,21 +63,7 @@ OF_APPLICATION_DELEGATE(Tests)
 		_client = [client retain];
 		of_log(@"Logged in client: %@", _client);
 
-		[self sync];
-	}];
-}
-
-- (void)sync
-{
-	[_client syncWithTimeout: 5
-			   block: ^ (id exception) {
-		if (exception != nil) {
-			of_log(@"Failed to sync: %@", exception);
-			[OFApplication terminateWithStatus: 1];
-		}
-
-		of_log(@"Synced");
-
+		[_client startSyncLoop];
 		[self fetchRoomList];
 	}];
 }
@@ -110,21 +96,6 @@ OF_APPLICATION_DELEGATE(Tests)
 		_roomID = [roomID copy];
 		of_log(@"Joined room %@", _roomID);
 
-		[self sync2];
-	}];
-}
-
-- (void)sync2
-{
-	[_client syncWithTimeout: 5
-			   block: ^ (id exception) {
-		if (exception != nil) {
-			of_log(@"Failed to sync: %@", exception);
-			[OFApplication terminateWithStatus: 1];
-		}
-
-		of_log(@"Synced");
-
 		[self sendMessage];
 	}];
 }
@@ -142,7 +113,11 @@ OF_APPLICATION_DELEGATE(Tests)
 
 		of_log(@"Message sent to %@", _roomID);
 
-		[self leaveRoom];
+		of_log(
+		    @"Waiting 5 seconds before leaving room and logging out");
+
+		[self performSelector: @selector(leaveRoom)
+			   afterDelay: 5];
 	}];
 }
 
