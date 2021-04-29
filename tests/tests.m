@@ -41,9 +41,9 @@ OF_APPLICATION_DELEGATE(Tests)
 	if (environment[@"OBJMATRIX_USER"] == nil ||
 	    environment[@"OBJMATRIX_PASS"] == nil ||
 	    environment[@"OBJMATRIX_HS"] == nil) {
-		[of_stderr writeString: @"Please set OBJMATRIX_USER, "
-					@"OBJMATRIX_PASS and OBJMATRIX_HS in "
-					@"the environment!\n"];
+		[OFStdErr writeString: @"Please set OBJMATRIX_USER, "
+				       @"OBJMATRIX_PASS and OBJMATRIX_HS in "
+				       @"the environment!\n"];
 		[OFApplication terminateWithStatus: 1];
 	}
 
@@ -56,12 +56,12 @@ OF_APPLICATION_DELEGATE(Tests)
 			 storage: storage
 			   block: ^ (MTXClient *client, id exception) {
 		if (exception != nil) {
-			of_log(@"Error logging in: %@", exception);
+			OFLog(@"Error logging in: %@", exception);
 			[OFApplication terminateWithStatus: 1];
 		}
 
 		_client = [client retain];
-		of_log(@"Logged in client: %@", _client);
+		OFLog(@"Logged in client: %@", _client);
 
 		[_client startSyncLoop];
 		[self fetchRoomList];
@@ -73,11 +73,11 @@ OF_APPLICATION_DELEGATE(Tests)
 	[_client fetchRoomListWithBlock: ^ (OFArray<OFString *> *rooms,
 					     id exception) {
 		if (exception != nil) {
-			of_log(@"Failed to fetch room list: %@", exception);
+			OFLog(@"Failed to fetch room list: %@", exception);
 			[OFApplication terminateWithStatus: 1];
 		}
 
-		of_log(@"Fetched room list: %@", rooms);
+		OFLog(@"Fetched room list: %@", rooms);
 
 		[self joinRoom];
 	}];
@@ -86,15 +86,14 @@ OF_APPLICATION_DELEGATE(Tests)
 - (void)joinRoom
 {
 	OFString *room = @"#test:nil.im";
-	[_client joinRoom: room
-		    block: ^ (OFString *roomID, id exception) {
+	[_client joinRoom: room block: ^ (OFString *roomID, id exception) {
 		if (exception != nil) {
-			of_log(@"Failed to join room %@: %@", room, exception);
+			OFLog(@"Failed to join room %@: %@", room, exception);
 			[OFApplication terminateWithStatus: 1];
 		}
 
 		_roomID = [roomID copy];
-		of_log(@"Joined room %@", _roomID);
+		OFLog(@"Joined room %@", _roomID);
 
 		[self sendMessage];
 	}];
@@ -106,31 +105,28 @@ OF_APPLICATION_DELEGATE(Tests)
 		      roomID: _roomID
 		       block: ^ (id exception) {
 		if (exception != nil) {
-			of_log(@"Failed to send message to room %@: %@",
+			OFLog(@"Failed to send message to room %@: %@",
 			    _roomID, exception);
 			[OFApplication terminateWithStatus: 1];
 		}
 
-		of_log(@"Message sent to %@", _roomID);
+		OFLog(@"Message sent to %@", _roomID);
 
-		of_log(
-		    @"Waiting 5 seconds before leaving room and logging out");
+		OFLog(@"Waiting 5 seconds before leaving room and logging out");
 
-		[self performSelector: @selector(leaveRoom)
-			   afterDelay: 5];
+		[self performSelector: @selector(leaveRoom) afterDelay: 5];
 	}];
 }
 
 - (void)leaveRoom
 {
-	[_client leaveRoom: _roomID
-		     block: ^ (id exception) {
+	[_client leaveRoom: _roomID block: ^ (id exception) {
 		if (exception != nil) {
-			of_log(@"Failed to leave room %@: %@", exception);
+			OFLog(@"Failed to leave room %@: %@", exception);
 			[OFApplication terminateWithStatus: 1];
 		}
 
-		of_log(@"Left room %@", _roomID);
+		OFLog(@"Left room %@", _roomID);
 
 		[self logOut];
 	}];
@@ -140,11 +136,11 @@ OF_APPLICATION_DELEGATE(Tests)
 {
 	[_client logOutWithBlock: ^ (id exception) {
 		if (exception != nil) {
-			of_log(@"Failed to log out: %@\n", exception);
+			OFLog(@"Failed to log out: %@\n", exception);
 			[OFApplication terminateWithStatus: 1];
 		}
 
-		of_log(@"Logged out client");
+		OFLog(@"Logged out client");
 
 		[OFApplication terminate];
 	}];

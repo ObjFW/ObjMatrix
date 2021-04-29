@@ -30,18 +30,18 @@ OF_ASSUME_NONNULL_BEGIN
 @property (readonly, nonatomic) OFString *room;
 
 + (instancetype)exceptionWithStatusCode: (int)statusCode
-			       response: (mtx_response_t)response
+			       response: (MTXResponse)response
 				 client: (MTXClient *)client OF_UNAVAILABLE;
 + (instancetype)exceptionWithRoom: (OFString *)room
 		       statusCode: (int)statusCode
-			 response: (mtx_response_t)response
+			 response: (MTXResponse)response
 			   client: (MTXClient *)client;
 - (instancetype)initWithStatusCode: (int)statusCode
-			  response: (mtx_response_t)response
+			  response: (MTXResponse)response
 			    client: (MTXClient *)client OF_UNAVAILABLE;
 - (instancetype)initWithRoom: (OFString *)room
 		  statusCode: (int)statusCode
-		    response: (mtx_response_t)response
+		    response: (MTXResponse)response
 		      client: (MTXClient *)client;
 @end
 

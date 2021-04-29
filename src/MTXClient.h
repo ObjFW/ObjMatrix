@@ -34,7 +34,7 @@ OF_ASSUME_NONNULL_BEGIN
  * @param client If the login succeeded, the newly created client
  * @param exception If the login failed, an exception
  */
-typedef void (^mtx_client_login_block_t)(MTXClient *_Nullable client,
+typedef void (^MTXClientLoginBlock)(MTXClient *_Nullable client,
     id _Nullable exception);
 
 /**
@@ -42,14 +42,14 @@ typedef void (^mtx_client_login_block_t)(MTXClient *_Nullable client,
  *
  * @param exception `nil` on success, otherwise an exception
  */
-typedef void (^mtx_client_response_block_t)(id _Nullable exception);
+typedef void (^MTXClientResponseBlock)(id _Nullable exception);
 
 /**
  * @brief A block called when an exception occurred during sync.
  *
  * @param exception The exception which occurred during sync
  */
-typedef void (^mtx_sync_exception_handler_block_t)(id exception);
+typedef void (^MTXSyncExceptionHandlerBlock)(id exception);
 
 /**
  * @brief A block called when the room list was fetched.
@@ -57,8 +57,8 @@ typedef void (^mtx_sync_exception_handler_block_t)(id exception);
  * @param rooms An array of joined rooms, or nil on error
  * @param exception An exception if fetching the room list failed
  */
-typedef void (^mtx_client_room_list_block_t)(
-    OFArray<OFString *> *_Nullable rooms, id _Nullable exception);
+typedef void (^MTXClientRoomListBlock)(OFArray<OFString *> *_Nullable rooms,
+    id _Nullable exception);
 
 /**
  * @brief A block called when a room was joined.
@@ -67,7 +67,7 @@ typedef void (^mtx_client_room_list_block_t)(
  *		 to get the room ID if a room alias was joined.
  * @param exception An exception if joining the room failed
  */
-typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
+typedef void (^MTXClientRoomJoinBlock)(OFString *_Nullable roomID,
     id _Nullable exception);
 
 /**
@@ -104,13 +104,12 @@ typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
  *
  * Defaults to 5 minutes.
  */
-@property (nonatomic) of_time_interval_t syncTimeout;
+@property (nonatomic) OFTimeInterval syncTimeout;
 
 /**
  * @brief A block to handle exceptions that occurred during sync.
  */
-@property (copy, nonatomic)
-    mtx_sync_exception_handler_block_t syncExceptionHandler;
+@property (copy, nonatomic) MTXSyncExceptionHandlerBlock syncExceptionHandler;
 
 /**
  * @brief Creates a new client with the specified access token on the specified
@@ -142,7 +141,7 @@ typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
 	     password: (OFString *)password
 	   homeserver: (OFURL *)homeserver
 	      storage: (id <MTXStorage>)storage
-		block: (mtx_client_login_block_t)block;
+		block: (MTXClientLoginBlock)block;
 
 /**
  * @brief Initializes an already allocated client with the specified access
@@ -182,14 +181,14 @@ typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
  *
  * @param block A block to call when logging out succeeded or failed
  */
-- (void)logOutWithBlock: (mtx_client_response_block_t)block;
+- (void)logOutWithBlock: (MTXClientResponseBlock)block;
 
 /**
  * @brief Fetches the list of joined rooms.
  *
  * @param block A block to call with the list of joined room
  */
-- (void)fetchRoomListWithBlock: (mtx_client_room_list_block_t)block;
+- (void)fetchRoomListWithBlock: (MTXClientRoomListBlock)block;
 
 /**
  * @brief Joins the specified room.
@@ -197,8 +196,7 @@ typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
  * @param room The room to join. Either a room ID or a room alias.
  * @param block A block to call when the room was joined
  */
-- (void)joinRoom: (OFString *)room
-	   block: (mtx_client_room_join_block_t)block;
+- (void)joinRoom: (OFString *)room block: (MTXClientRoomJoinBlock)block;
 
 /**
  * @brief Leaves the specified room.
@@ -206,8 +204,7 @@ typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
  * @param roomID The room ID to leave
  * @param block A block to call when the room was left
  */
-- (void)leaveRoom: (OFString *)roomID
-	    block: (mtx_client_response_block_t)block;
+- (void)leaveRoom: (OFString *)roomID block: (MTXClientResponseBlock)block;
 
 /**
  * @brief Sends the specified message to the specified room ID.
@@ -218,7 +215,7 @@ typedef void (^mtx_client_room_join_block_t)(OFString *_Nullable roomID,
  */
 - (void)sendMessage: (OFString *)message
 	     roomID: (OFString *)roomID
-	      block: (mtx_client_response_block_t)block;
+	      block: (MTXClientResponseBlock)block;
 @end
 
 OF_ASSUME_NONNULL_END

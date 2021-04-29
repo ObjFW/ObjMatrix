@@ -30,14 +30,14 @@ OF_ASSUME_NONNULL_BEGIN
 
 @interface MTXClientException: OFException
 @property (readonly, nonatomic) int statusCode;
-@property (readonly, nonatomic) mtx_response_t response;
+@property (readonly, nonatomic) MTXResponse response;
 @property (readonly, nonatomic) MTXClient *client;
 
 + (instancetype)exceptionWithStatusCode: (int)statusCode
-			       response: (mtx_response_t)response
+			       response: (MTXResponse)response
 				 client: (MTXClient *)client;
 - (instancetype)initWithStatusCode: (int)statusCode
-			  response: (mtx_response_t)respons
+			  response: (MTXResponse)respons
 			    client: (MTXClient *)client
     OF_DESIGNATED_INITIALIZER;
 @end

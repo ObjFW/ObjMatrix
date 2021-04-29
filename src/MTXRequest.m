@@ -25,7 +25,7 @@
 @implementation MTXRequest
 {
 	OFData *_body;
-	mtx_request_block_t _block;
+	MTXRequestBlock _block;
 }
 
 + (instancetype)requestWithPath: (OFString *)path
@@ -47,7 +47,7 @@
 		_accessToken = [accessToken copy];
 		_homeserver = [homeserver copy];
 		_path = [path copy];
-		_method = OF_HTTP_REQUEST_METHOD_GET;
+		_method = OFHTTPRequestMethodGet;
 	} @catch (id e) {
 		[self release];
 		@throw e;
@@ -73,9 +73,8 @@
 	[_body release];
 
 	OFString *JSONString = [body JSONRepresentation];
-	_body = [[OFData alloc]
-	    initWithItems: JSONString.UTF8String
-		    count: JSONString.UTF8StringLength];
+	_body = [[OFData alloc] initWithItems: JSONString.UTF8String
+					count: JSONString.UTF8StringLength];
 
 	objc_autoreleasePoolPop(pool);
 }
@@ -83,11 +82,10 @@
 - (OFDictionary<OFString *, id> *)body
 {
 	return [OFString stringWithUTF8String: _body.items
-				       length: _body.count]
-	    .objectByParsingJSON;
+				       length: _body.count].objectByParsingJSON;
 }
 
-- (void)performWithBlock: (mtx_request_block_t)block
+- (void)performWithBlock: (MTXRequestBlock)block
 {
 	void *pool = objc_autoreleasePoolPush();
 
@@ -131,7 +129,7 @@
 		exception = nil;
 
 	/* Reset to nil first, so that another one can be performed. */
-	mtx_request_block_t block = _block;
+	MTXRequestBlock block = _block;
 	_block = nil;
 
 	if (exception == nil) {
@@ -142,11 +140,10 @@
 				size_t length = [response readIntoBuffer: buffer
 								  length: 512];
 
-				[responseData addItems: buffer
-						 count: length];
+				[responseData addItems: buffer count: length];
 			}
 
-			mtx_response_t responseJSON = [OFString
+			MTXResponse responseJSON = [OFString
 			    stringWithUTF8String: responseData.items
 					  length: responseData.count]
 			    .objectByParsingJSON;

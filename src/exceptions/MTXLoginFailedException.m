@@ -26,7 +26,7 @@
 + (instancetype)exceptionWithUser: (OFString *)user
 		       homeserver: (OFURL *)homeserver
 		       statusCode: (int)statusCode
-			 response: (mtx_response_t)response
+			 response: (MTXResponse)response
 {
 	return [[[self alloc] initWithUser: user
 				homeserver: homeserver
@@ -37,7 +37,7 @@
 - (instancetype)initWithUser: (OFString *)user
 		  homeserver: (OFURL *)homeserver
 		  statusCode: (int)statusCode
-		    response: (mtx_response_t)response
+		    response: (MTXResponse)response
 {
 	self = [super init];
 

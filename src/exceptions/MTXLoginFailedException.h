@@ -30,16 +30,16 @@ OF_ASSUME_NONNULL_BEGIN
 @property (readonly, nonatomic) OFString *user;
 @property (readonly, nonatomic) OFURL *homeserver;
 @property (readonly, nonatomic) int statusCode;
-@property (readonly, nonatomic) mtx_response_t response;
+@property (readonly, nonatomic) MTXResponse response;
 
 + (instancetype)exceptionWithUser: (OFString *)user
 		       homeserver: (OFURL *)homeserver
 		       statusCode: (int)statusCode
-			 response: (mtx_response_t)response;
+			 response: (MTXResponse)response;
 - (instancetype)initWithUser: (OFString *)user
 		  homeserver: (OFURL *)homeserver
 		  statusCode: (int)statusCode
-		    response: (mtx_response_t)response;
+		    response: (MTXResponse)response;
 @end
 
 OF_ASSUME_NONNULL_END

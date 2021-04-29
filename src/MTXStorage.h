@@ -30,7 +30,7 @@ OF_ASSUME_NONNULL_BEGIN
  * @return Whether the transaction should be committed (`true`) or rolled back
  *	   (`false`).
  */
-typedef bool (^mtx_storage_transaction_block_t)(void);
+typedef bool (^MTXStorageTransactionBlock)(void);
 
 /**
  * @brief A protocol for a storage to be used by @ref MTXClient.
@@ -39,7 +39,7 @@ typedef bool (^mtx_storage_transaction_block_t)(void);
 /**
  * @brief Performs all operations inside the block as a transaction.
  */
-- (void)transactionWithBlock: (mtx_storage_transaction_block_t)block;
+- (void)transactionWithBlock: (MTXStorageTransactionBlock)block;
 
 /**
  * @brief Stores the next batch for the specified device.
@@ -47,8 +47,7 @@ typedef bool (^mtx_storage_transaction_block_t)(void);
  * @param nextBatch The next batch for the device
  * @param deviceID The device for which to store the next batch
  */
-- (void)setNextBatch: (OFString *)nextBatch
-	 forDeviceID: (OFString *)deviceID;
+- (void)setNextBatch: (OFString *)nextBatch forDeviceID: (OFString *)deviceID;
 
 /**
  * @brief Returns the next batch for the specified device.
@@ -66,8 +65,7 @@ typedef bool (^mtx_storage_transaction_block_t)(void);
  * @param roomID The room ID to add to the list of joined rooms
  * @param userID The user ID for which to add the room
  */
-- (void)addJoinedRoom: (OFString *)roomID
-	      forUser: (OFString *)userID;
+- (void)addJoinedRoom: (OFString *)roomID forUser: (OFString *)userID;
 
 /**
  * @brief Removes the specified room ID to the list of joined rooms for the
@@ -76,8 +74,7 @@ typedef bool (^mtx_storage_transaction_block_t)(void);
  * @param roomID The room ID to add to the list of joined rooms
  * @param userID The user ID for which to add the room
  */
-- (void)removeJoinedRoom: (OFString *)roomID
-		 forUser: (OFString *)userID;
+- (void)removeJoinedRoom: (OFString *)roomID forUser: (OFString *)userID;
 
 /**
  * @brief Returns the joined room IDs for the specified user ID.

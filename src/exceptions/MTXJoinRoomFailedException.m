@@ -27,7 +27,7 @@
 @implementation MTXJoinRoomFailedException
 + (instancetype)exceptionWithRoom: (OFString *)room
 		       statusCode: (int)statusCode
-			 response: (mtx_response_t)response
+			 response: (MTXResponse)response
 			   client: (MTXClient *)client
 {
 	return [[[self alloc] initWithRoom: room
@@ -38,7 +38,7 @@
 
 - (instancetype)initWithRoom: (OFString *)room
 		  statusCode: (int)statusCode
-		    response: (mtx_response_t)response
+		    response: (MTXResponse)response
 		      client: (MTXClient *)client
 {
 	self = [super initWithStatusCode: statusCode

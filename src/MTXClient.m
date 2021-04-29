@@ -69,7 +69,7 @@ validateHomeserver(OFURL *homeserver)
 	     password: (OFString *)password
 	   homeserver: (OFURL *)homeserver
 	      storage: (id <MTXStorage>)storage
-		block: (mtx_client_login_block_t)block
+		block: (MTXClientLoginBlock)block
 {
 	void *pool = objc_autoreleasePoolPush();
 
@@ -79,7 +79,7 @@ validateHomeserver(OFURL *homeserver)
 	    requestWithPath: @"/_matrix/client/r0/login"
 		accessToken: nil
 		 homeserver: homeserver];
-	request.method = OF_HTTP_REQUEST_METHOD_POST;
+	request.method = OFHTTPRequestMethodPost;
 	request.body = @{
 		@"type": @"m.login.password",
 		@"identifier": @{
@@ -89,7 +89,7 @@ validateHomeserver(OFURL *homeserver)
 		@"password": password
 	};
 
-	[request performWithBlock: ^ (mtx_response_t response, int statusCode,
+	[request performWithBlock: ^ (MTXResponse response, int statusCode,
 				       id exception) {
 		if (exception != nil) {
 			block(nil, exception);
@@ -217,7 +217,7 @@ validateHomeserver(OFURL *homeserver)
 					       forKey: @"timeout"];
 	query[@"since"] = [_storage nextBatchForDeviceID: _deviceID];
 	request.query = query;
-	[request performWithBlock: ^ (mtx_response_t response, int statusCode,
+	[request performWithBlock: ^ (MTXResponse response, int statusCode,
 				       id exception) {
 		if (exception != nil) {
 			if (_syncExceptionHandler != NULL)
@@ -275,13 +275,13 @@ validateHomeserver(OFURL *homeserver)
 	_syncing = false;
 }
 
-- (void)logOutWithBlock: (mtx_client_response_block_t)block
+- (void)logOutWithBlock: (MTXClientResponseBlock)block
 {
 	void *pool = objc_autoreleasePoolPush();
 	MTXRequest *request =
 	    [self requestWithPath: @"/_matrix/client/r0/logout"];
-	request.method = OF_HTTP_REQUEST_METHOD_POST;
-	[request performWithBlock: ^ (mtx_response_t response, int statusCode,
+	request.method = OFHTTPRequestMethodPost;
+	[request performWithBlock: ^ (MTXResponse response, int statusCode,
 				       id exception) {
 		if (exception != nil) {
 			block(exception);
@@ -302,12 +302,12 @@ validateHomeserver(OFURL *homeserver)
 	objc_autoreleasePoolPop(pool);
 }
 
-- (void)fetchRoomListWithBlock: (mtx_client_room_list_block_t)block
+- (void)fetchRoomListWithBlock: (MTXClientRoomListBlock)block
 {
 	void *pool = objc_autoreleasePoolPush();
 	MTXRequest *request =
 	    [self requestWithPath: @"/_matrix/client/r0/joined_rooms"];
-	[request performWithBlock: ^ (mtx_response_t response, int statusCode,
+	[request performWithBlock: ^ (MTXResponse response, int statusCode,
 				       id exception) {
 		if (exception != nil) {
 			block(nil, exception);
@@ -341,14 +341,13 @@ validateHomeserver(OFURL *homeserver)
 	objc_autoreleasePoolPop(pool);
 }
 
-- (void)joinRoom: (OFString *)room
-	   block: (mtx_client_room_join_block_t)block
+- (void)joinRoom: (OFString *)room block: (MTXClientRoomJoinBlock)block
 {
 	void *pool = objc_autoreleasePoolPush();
 	MTXRequest *request = [self requestWithPath:
 	    [OFString stringWithFormat: @"/_matrix/client/r0/join/%@", room]];
-	request.method = OF_HTTP_REQUEST_METHOD_POST;
-	[request performWithBlock: ^ (mtx_response_t response, int statusCode,
+	request.method = OFHTTPRequestMethodPost;
+	[request performWithBlock: ^ (MTXResponse response, int statusCode,
 				       id exception) {
 		if (exception != nil) {
 			block(nil, exception);
@@ -376,14 +375,13 @@ validateHomeserver(OFURL *homeserver)
 	objc_autoreleasePoolPop(pool);
 }
 
-- (void)leaveRoom: (OFString *)roomID
-	    block: (mtx_client_response_block_t)block
+- (void)leaveRoom: (OFString *)roomID block: (MTXClientResponseBlock)block
 {
 	void *pool = objc_autoreleasePoolPush();
 	MTXRequest *request = [self requestWithPath: [OFString
 	    stringWithFormat: @"/_matrix/client/r0/rooms/%@/leave", roomID]];
-	request.method = OF_HTTP_REQUEST_METHOD_POST;
-	[request performWithBlock: ^ (mtx_response_t response, int statusCode,
+	request.method = OFHTTPRequestMethodPost;
+	[request performWithBlock: ^ (MTXResponse response, int statusCode,
 				       id exception) {
 		if (exception != nil) {
 			block(exception);
@@ -407,18 +405,18 @@ validateHomeserver(OFURL *homeserver)
 
 - (void)sendMessage: (OFString *)message
 	     roomID: (OFString *)roomID
-	      block: (mtx_client_response_block_t)block;
+	      block: (MTXClientResponseBlock)block;
 {
 	void *pool = objc_autoreleasePoolPush();
 	OFString *path = [OFString stringWithFormat:
 	    @"/_matrix/client/r0/rooms/%@/send/m.room.message", roomID];
 	MTXRequest *request = [self requestWithPath: path];
-	request.method = OF_HTTP_REQUEST_METHOD_POST;
+	request.method = OFHTTPRequestMethodPost;
 	request.body = @{
 		@"msgtype": @"m.text",
 		@"body": message
 	};
-	[request performWithBlock: ^ (mtx_response_t response, int statusCode,
+	[request performWithBlock: ^ (MTXResponse response, int statusCode,
 				       id exception) {
 		if (exception != nil) {
 			block(exception);
@@ -466,8 +464,7 @@ validateHomeserver(OFURL *homeserver)
 		return;
 
 	for (OFString *roomID in rooms)
-		[_storage addJoinedRoom: roomID
-				forUser: _userID];
+		[_storage addJoinedRoom: roomID forUser: _userID];
 }
 
 - (void)processInvitedRooms: (OFDictionary<OFString *, id> *)rooms
@@ -482,7 +479,6 @@ validateHomeserver(OFURL *homeserver)
 		return;
 
 	for (OFString *roomID in rooms)
-		[_storage removeJoinedRoom: roomID
-				   forUser: _userID];
+		[_storage removeJoinedRoom: roomID forUser: _userID];
 }
 @end

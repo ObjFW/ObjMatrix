@@ -29,7 +29,7 @@ OF_ASSUME_NONNULL_BEGIN
  *
  * This is a typedef for `OFDictionary<OFString *, id> *`.
  */
-typedef OFDictionary<OFString *, id> *mtx_response_t;
+typedef OFDictionary<OFString *, id> *MTXResponse;
 
 /**
  * @brief A block called with the response for an MTXRequest.
@@ -39,8 +39,8 @@ typedef OFDictionary<OFString *, id> *mtx_response_t;
  * @param exception The first exception that occurred during the request,
  *		    or `nil` on success
  */
-typedef void (^mtx_request_block_t)(mtx_response_t _Nullable response,
-    int statusCode, id _Nullable exception);
+typedef void (^MTXRequestBlock)(MTXResponse _Nullable response, int statusCode,
+    id _Nullable exception);
 
 /**
  * @brief An internal class for performing a request on the Matrix server.
@@ -63,7 +63,7 @@ typedef void (^mtx_request_block_t)(mtx_response_t _Nullable response,
  *
  * Defaults to `OF_HTTP_REQUEST_METHOD_GET`.
  */
-@property (nonatomic) of_http_request_method_t method;
+@property (nonatomic) OFHTTPRequestMethod method;
 
 /**
  * @brief The path of the request.
@@ -112,7 +112,7 @@ typedef void (^mtx_request_block_t)(mtx_response_t _Nullable response,
  *
  * @param block The block to call once the request succeeded or failed
  */
-- (void)performWithBlock: (mtx_request_block_t)block;
+- (void)performWithBlock: (MTXRequestBlock)block;
 @end
 
 OF_ASSUME_NONNULL_END

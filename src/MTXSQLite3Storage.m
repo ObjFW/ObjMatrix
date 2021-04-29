@@ -106,13 +106,12 @@
 	    @");"];
 }
 
-- (void)transactionWithBlock: (mtx_storage_transaction_block_t)block
+- (void)transactionWithBlock: (MTXStorageTransactionBlock)block
 {
 	[_conn transactionWithBlock: block];
 }
 
-- (void)setNextBatch: (OFString *)nextBatch
-	 forDeviceID: (OFString *)deviceID
+- (void)setNextBatch: (OFString *)nextBatch forDeviceID: (OFString *)deviceID
 {
 	void *pool = objc_autoreleasePoolPush();
 
@@ -146,8 +145,7 @@
 	return [nextBatch autorelease];
 }
 
-- (void)addJoinedRoom: (OFString *)roomID
-	      forUser: (OFString *)userID
+- (void)addJoinedRoom: (OFString *)roomID forUser: (OFString *)userID
 {
 	void *pool = objc_autoreleasePoolPush();
 
@@ -161,8 +159,7 @@
 	objc_autoreleasePoolPop(pool);
 }
 
-- (void)removeJoinedRoom: (OFString *)roomID
-		 forUser: (OFString *)userID
+- (void)removeJoinedRoom: (OFString *)roomID forUser: (OFString *)userID
 {
 	void *pool = objc_autoreleasePoolPush();
 
@@ -182,9 +179,7 @@
 	void *pool = objc_autoreleasePoolPush();
 
 	[_joinedRoomsGetStatement reset];
-	[_joinedRoomsGetStatement bindWithDictionary: @{
-		@"$user_id": userID
-	}];
+	[_joinedRoomsGetStatement bindWithDictionary: @{ @"$user_id": userID }];
 
 	while ([_joinedRoomsGetStatement step])
 		[joinedRooms addObject:

@@ -26,7 +26,7 @@
 
 @implementation MTXClientException
 + (instancetype)exceptionWithStatusCode: (int)statusCode
-			       response: (mtx_response_t)response
+			       response: (MTXResponse)response
 				 client: (MTXClient *)client
 {
 	return [[[self alloc] initWithStatusCode: statusCode
@@ -35,7 +35,7 @@
 }
 
 - (instancetype)initWithStatusCode: (int)statusCode
-			  response: (mtx_response_t)response
+			  response: (MTXResponse)response
 			    client: (MTXClient *)client
 {
 	self = [super init];
