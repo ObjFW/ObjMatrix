@@ -28,16 +28,16 @@ OF_ASSUME_NONNULL_BEGIN
 
 @interface MTXLoginFailedException: OFException
 @property (readonly, nonatomic) OFString *user;
-@property (readonly, nonatomic) OFURL *homeserver;
+@property (readonly, nonatomic) OFIRI *homeserver;
 @property (readonly, nonatomic) int statusCode;
 @property (readonly, nonatomic) MTXResponse response;
 
 + (instancetype)exceptionWithUser: (OFString *)user
-		       homeserver: (OFURL *)homeserver
+		       homeserver: (OFIRI *)homeserver
 		       statusCode: (int)statusCode
 			 response: (MTXResponse)response;
 - (instancetype)initWithUser: (OFString *)user
-		  homeserver: (OFURL *)homeserver
+		  homeserver: (OFIRI *)homeserver
 		  statusCode: (int)statusCode
 		    response: (MTXResponse)response;
 @end

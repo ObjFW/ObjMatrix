@@ -24,7 +24,7 @@
 
 @implementation MTXLoginFailedException
 + (instancetype)exceptionWithUser: (OFString *)user
-		       homeserver: (OFURL *)homeserver
+		       homeserver: (OFIRI *)homeserver
 		       statusCode: (int)statusCode
 			 response: (MTXResponse)response
 {
@@ -35,7 +35,7 @@
 }
 
 - (instancetype)initWithUser: (OFString *)user
-		  homeserver: (OFURL *)homeserver
+		  homeserver: (OFIRI *)homeserver
 		  statusCode: (int)statusCode
 		    response: (MTXResponse)response
 {

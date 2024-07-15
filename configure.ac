@@ -16,10 +16,10 @@ AS_IF([test x"$OBJFW_CONFIG" = x""], [
 	AC_MSG_ERROR(You need ObjFW and objfw-config installed!)
 ])
 
-AS_IF([$OBJFW_CONFIG --package ObjOpenSSL], [
-	OBJFW_CONFIG_FLAGS="$OBJFW_CONFIG_FLAGS --package ObjOpenSSL"
+AS_IF([$OBJFW_CONFIG --package ObjFWTLS], [
+	OBJFW_CONFIG_FLAGS="$OBJFW_CONFIG_FLAGS --package ObjFWTLS"
 ], [
-	AC_MSG_ERROR(ObjOpenSSL not found!)
+	AC_MSG_ERROR(ObjFWTLS not found!)
 ])
 AS_IF([$OBJFW_CONFIG --package ObjSQLite3], [
 	OBJFW_CONFIG_FLAGS="$OBJFW_CONFIG_FLAGS --package ObjSQLite3"

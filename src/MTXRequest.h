@@ -54,9 +54,9 @@ typedef void (^MTXRequestBlock)(MTXResponse _Nullable response, int statusCode,
 @property (readonly, nonatomic, nullable) OFString *accessToken;
 
 /**
- * @brief The URL of the homeserver to send the request to.
+ * @brief The IRI of the homeserver to send the request to.
  */
-@property (readonly, nonatomic) OFURL *homeserver;
+@property (readonly, nonatomic) OFIRI *homeserver;
 
 /**
  * @brief The HTTP request method.
@@ -71,10 +71,10 @@ typedef void (^MTXRequestBlock)(MTXResponse _Nullable response, int statusCode,
 @property (copy, nonatomic) OFString *path;
 
 /**
- * @brief The query for the request.
+ * @brief The query items for the request.
  */
 @property (copy, nullable, nonatomic)
-    OFDictionary<OFString *, OFString *> *query;
+    OFArray<OFPair<OFString *, OFString *> *> *queryItems;
 
 /**
  * @brief An optional body to send along with the request.
@@ -92,7 +92,7 @@ typedef void (^MTXRequestBlock)(MTXResponse _Nullable response, int statusCode,
  */
 + (instancetype)requestWithPath: (OFString *)path
 		    accessToken: (nullable OFString *)accessToken
-		     homeserver: (OFURL *)homeserver;
+		     homeserver: (OFIRI *)homeserver;
 
 /**
  * @brief Initializes an already allocated request with the specified access
@@ -104,7 +104,7 @@ typedef void (^MTXRequestBlock)(MTXResponse _Nullable response, int statusCode,
  */
 - (instancetype)initWithPath: (OFString *)path
 		 accessToken: (nullable OFString *)accessToken
-		  homeserver: (OFURL *)homeserver;
+		  homeserver: (OFIRI *)homeserver;
 
 /**
  * @brief Performs the request and calls the specified block once the request

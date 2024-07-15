@@ -35,7 +35,7 @@ OF_APPLICATION_DELEGATE(Tests)
 	OFString *_roomID;
 }
 
-- (void)applicationDidFinishLaunching
+- (void)applicationDidFinishLaunching: (OFNotification *)notification
 {
 	__auto_type environment = OFApplication.environment;
 	if (environment[@"OBJMATRIX_USER"] == nil ||
@@ -47,7 +47,7 @@ OF_APPLICATION_DELEGATE(Tests)
 		[OFApplication terminateWithStatus: 1];
 	}
 
-	OFURL *homeserver = [OFURL URLWithString: environment[@"OBJMATRIX_HS"]];
+	OFIRI *homeserver = [OFIRI IRIWithString: environment[@"OBJMATRIX_HS"]];
 	id <MTXStorage> storage =
 	    [MTXSQLite3Storage storageWithPath: @"tests.db"];
 	[MTXClient logInWithUser: environment[@"OBJMATRIX_USER"]

@@ -32,12 +32,12 @@
 #import "MTXSyncFailedException.h"
 
 static void
-validateHomeserver(OFURL *homeserver)
+validateHomeserver(OFIRI *homeserver)
 {
 	if (![homeserver.scheme isEqual: @"http"] &&
 	    ![homeserver.scheme isEqual: @"https"])
 		@throw [OFUnsupportedProtocolException
-		    exceptionWithURL: homeserver];
+		    exceptionWithIRI: homeserver];
 
 	if (homeserver.path != nil && ![homeserver.path isEqual: @"/"])
 		@throw [OFInvalidArgumentException exception];
@@ -55,7 +55,7 @@ validateHomeserver(OFURL *homeserver)
 + (instancetype)clientWithUserID: (OFString *)userID
 			deviceID: (OFString *)deviceID
 		     accessToken: (OFString *)accessToken
-		      homeserver: (OFURL *)homeserver
+		      homeserver: (OFIRI *)homeserver
 			 storage: (id <MTXStorage>)storage
 {
 	return [[[self alloc] initWithUserID: userID
@@ -67,7 +67,7 @@ validateHomeserver(OFURL *homeserver)
 
 + (void)logInWithUser: (OFString *)user
 	     password: (OFString *)password
-	   homeserver: (OFURL *)homeserver
+	   homeserver: (OFIRI *)homeserver
 	      storage: (id <MTXStorage>)storage
 		block: (MTXClientLoginBlock)block
 {
@@ -112,22 +112,24 @@ validateHomeserver(OFURL *homeserver)
 		if (![userID isKindOfClass: OFString.class] ||
 		    ![deviceID isKindOfClass: OFString.class] ||
 		    ![accessToken isKindOfClass: OFString.class]) {
-			block(nil, [OFInvalidServerReplyException exception]);
+			block(nil,
+			    [OFInvalidServerResponseException exception]);
 			return;
 		}
 
-		OFString *baseURL =
+		OFString *baseIRI =
 		    response[@"well_known"][@"m.homeserver"][@"base_url"];
-		if (baseURL != nil &&
-		    ![baseURL isKindOfClass: OFString.class]) {
-			block(nil, [OFInvalidServerReplyException exception]);
+		if (baseIRI != nil &&
+		    ![baseIRI isKindOfClass: OFString.class]) {
+			block(nil,
+			    [OFInvalidServerResponseException exception]);
 			return;
 		}
 
-		OFURL *realHomeserver;
-		if (baseURL != nil) {
+		OFIRI *realHomeserver;
+		if (baseIRI != nil) {
 			@try {
-				realHomeserver = [OFURL URLWithString: baseURL];
+				realHomeserver = [OFIRI IRIWithString: baseIRI];
 			} @catch (id e) {
 				block(nil, e);
 				return;
@@ -149,7 +151,7 @@ validateHomeserver(OFURL *homeserver)
 - (instancetype)initWithUserID: (OFString *)userID
 		      deviceID: (OFString *)deviceID
 		   accessToken: (OFString *)accessToken
-		    homeserver: (OFURL *)homeserver
+		    homeserver: (OFIRI *)homeserver
 		       storage: (id <MTXStorage>)storage
 {
 	self = [super init];
@@ -212,11 +214,20 @@ validateHomeserver(OFURL *homeserver)
 	MTXRequest *request = [self
 	    requestWithPath: @"/_matrix/client/r0/sync"];
 	unsigned long long timeoutMs = _syncTimeout * 1000;
-	OFMutableDictionary<OFString *, OFString *> *query =
-	    [OFMutableDictionary dictionaryWithObject: @(timeoutMs).stringValue
-					       forKey: @"timeout"];
-	query[@"since"] = [_storage nextBatchForDeviceID: _deviceID];
-	request.query = query;
+	OFMutableArray<OFPair <OFString *, OFString *> *> *queryItems =
+	    [OFMutableArray array];
+	OFString *since = [_storage nextBatchForDeviceID: _deviceID];
+
+	[queryItems addObject:
+	    [OFPair pairWithFirstObject: @"timeout"
+			   secondObject: @(timeoutMs).stringValue]];
+
+	if (since != nil)
+		[queryItems addObject:
+		    [OFPair pairWithFirstObject: @"since"
+				   secondObject: since]];
+
+	request.queryItems = queryItems;
 	[request performWithBlock: ^ (MTXResponse response, int statusCode,
 				       id exception) {
 		if (exception != nil) {
@@ -238,7 +249,8 @@ validateHomeserver(OFURL *homeserver)
 		if (![nextBatch isKindOfClass: OFString.class]) {
 			if (_syncExceptionHandler != NULL)
 				_syncExceptionHandler(
-				    [OFInvalidServerReplyException exception]);
+				    [OFInvalidServerResponseException
+				    exception]);
 			return;
 		}
 
@@ -324,13 +336,15 @@ validateHomeserver(OFURL *homeserver)
 
 		OFArray<OFString *> *joinedRooms = response[@"joined_rooms"];
 		if (![joinedRooms isKindOfClass: OFArray.class]) {
-			block(nil, [OFInvalidServerReplyException exception]);
+			block(nil,
+			    [OFInvalidServerResponseException exception]);
 			return;
 		}
 		for (OFString *room in joinedRooms) {
 			if (![room isKindOfClass: OFString.class]) {
 				block(nil,
-				    [OFInvalidServerReplyException exception]);
+				    [OFInvalidServerResponseException
+				    exception]);
 				return;
 			}
 		}
@@ -365,7 +379,8 @@ validateHomeserver(OFURL *homeserver)
 
 		OFString *roomID = response[@"room_id"];
 		if (![roomID isKindOfClass: OFString.class]) {
-			block(nil, [OFInvalidServerReplyException exception]);
+			block(nil,
+			    [OFInvalidServerResponseException exception]);
 			return;
 		}
 

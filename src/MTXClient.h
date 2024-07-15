@@ -92,7 +92,7 @@ typedef void (^MTXClientRoomJoinBlock)(OFString *_Nullable roomID,
 /**
  * @brief The homeserver used by the client.
  */
-@property (readonly, nonatomic) OFURL *homeserver;
+@property (readonly, nonatomic) OFIRI *homeserver;
 
 /**
  * @brief The storage used by the client.
@@ -118,14 +118,14 @@ typedef void (^MTXClientRoomJoinBlock)(OFString *_Nullable roomID,
  * @param userID The user ID for the client
  * @param deviceID The device ID for the client
  * @param accessToken The access token for the client
- * @param homeserver The URL of the homeserver
+ * @param homeserver The IRI of the homeserver
  * @param storage The storage the client should use
  * @return An autoreleased MTXClient
  */
 + (instancetype)clientWithUserID: (OFString *)userID
 			deviceID: (OFString *)deviceID
 		     accessToken: (OFString *)accessToken
-		      homeserver: (OFURL *)homeserver
+		      homeserver: (OFIRI *)homeserver
 			 storage: (id <MTXStorage>)storage;
 
 /**
@@ -139,7 +139,7 @@ typedef void (^MTXClientRoomJoinBlock)(OFString *_Nullable roomID,
  */
 + (void)logInWithUser: (OFString *)user
 	     password: (OFString *)password
-	   homeserver: (OFURL *)homeserver
+	   homeserver: (OFIRI *)homeserver
 	      storage: (id <MTXStorage>)storage
 		block: (MTXClientLoginBlock)block;
 
@@ -150,14 +150,14 @@ typedef void (^MTXClientRoomJoinBlock)(OFString *_Nullable roomID,
  * @param userID The user ID for the client
  * @param deviceID The device ID for the client
  * @param accessToken The access token for the client
- * @param homeserver The URL of the homeserver
+ * @param homeserver The IRI of the homeserver
  * @param storage The storage the client should use
  * @return An initialized MTXClient
  */
 - (instancetype)initWithUserID: (OFString *)userID
 		      deviceID: (OFString *)deviceID
 		   accessToken: (OFString *)accessToken
-		    homeserver: (OFURL *)homeserver
+		    homeserver: (OFIRI *)homeserver
 		       storage: (id <MTXStorage>)storage
     OF_DESIGNATED_INITIALIZER;
 

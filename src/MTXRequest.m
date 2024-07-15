@@ -30,7 +30,7 @@
 
 + (instancetype)requestWithPath: (OFString *)path
 		    accessToken: (OFString *)accessToken
-		     homeserver: (OFURL *)homeserver
+		     homeserver: (OFIRI *)homeserver
 {
 	return [[[self alloc] initWithPath: path
 			       accessToken: accessToken
@@ -39,7 +39,7 @@
 
 - (instancetype)initWithPath: (OFString *)path
 		 accessToken: (OFString *)accessToken
-		  homeserver: (OFURL *)homeserver
+		  homeserver: (OFIRI *)homeserver
 {
 	self = [super init];
 
@@ -91,11 +91,11 @@
 
 	if (_block != nil)
 		/* Not the best exception to indicate it's already in-flight. */
-		@throw [OFAlreadyConnectedException exception];
+		@throw [OFAlreadyOpenException exceptionWithObject: self];
 
-	OFMutableURL *requestURL = [[_homeserver mutableCopy] autorelease];
-	requestURL.path = _path;
-	requestURL.queryDictionary = _query;
+	OFMutableIRI *requestIRI = [[_homeserver mutableCopy] autorelease];
+	requestIRI.path = _path;
+	requestIRI.queryItems = _queryItems;
 
 	OFMutableDictionary *headers = [OFMutableDictionary dictionary];
 	headers[@"User-Agent"] = @"ObjMatrix";
@@ -105,7 +105,7 @@
 	if (_body != nil)
 		headers[@"Content-Length"] = @(_body.count).stringValue;
 
-	OFHTTPRequest *request = [OFHTTPRequest requestWithURL: requestURL];
+	OFHTTPRequest *request = [OFHTTPRequest requestWithIRI: requestIRI];
 	request.method = _method;
 	request.headers = headers;
 
