@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Jonathan Schleifer <js@nil.im>
+ * Copyright (c) 2020, 2021, Jonathan Schleifer <js@nil.im>
  *
  * https://fossil.nil.im/objmatrix
  *
