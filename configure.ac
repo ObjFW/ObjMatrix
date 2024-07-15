@@ -74,26 +74,27 @@ AS_IF([test x"$GOBJC" = x"yes"], [
 	old_OBJCFLAGS="$OBJCFLAGS"
 	OBJCFLAGS="$OBJCFLAGS -Wcast-align"
 	AC_MSG_CHECKING(whether -Wcast-align is buggy)
-	AC_TRY_COMPILE([
-		#ifdef __has_attribute
-		# if __has_attribute(objc_root_class)
-		__attribute__((__objc_root_class__))
-		# endif
-		#endif
-		@interface Foo
-		{
-			struct objc_class *_isa;
-		}
-		@end
-
-		@implementation Foo
-		- (void)foo
-		{
-			struct objc_class *c = _isa;
-			(void)c;
-		}
-		@end
-	], [
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([
+			#ifdef __has_attribute
+			# if __has_attribute(objc_root_class)
+			__attribute__((__objc_root_class__))
+			# endif
+			#endif
+			@interface Foo
+			{
+				struct objc_class *_isa;
+			}
+			@end
+		], [
+			@implementation Foo
+			- (void)foo
+			{
+				struct objc_class *c = _isa;
+				(void)c;
+			}
+			@end
+		])
 	], [
 		AC_MSG_RESULT(no)
 	], [
