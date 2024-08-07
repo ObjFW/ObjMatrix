@@ -1,5 +1,0 @@
-package_format 1
-package_depends_on ObjFWTLS
-package_depends_on ObjSQLite3
-LIBS="-lobjmatrix $LIBS"
-FRAMEWORK_LIBS="-framework ObjMatrix $FRAMEWORK_LIBS"
