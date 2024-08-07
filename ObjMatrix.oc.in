@@ -3,4 +3,4 @@ package_depends_on ObjFWTLS
 package_depends_on ObjSQLite3
 LIBS="-L@libdir@ -lobjmatrix $LIBS"
 FRAMEWORK_LIBS="-L@libdir@ -lobjmatrix $FRAMEWORK_LIBS"
-STATIC_LIBS="@libdir/libobjmatrix.a $STATIC_LIBS"
+STATIC_LIBS="@libdir@/libobjmatrix.a $STATIC_LIBS"
