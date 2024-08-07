@@ -12,6 +12,7 @@ objmatrix = library('objmatrix',
   sources + exceptions_sources,
   include_directories: incdir,
   dependencies: objfw_dep,
+  soversion: '0.0.0',
   install: true)
 
 headers = ['MTXStorage.h', 'ObjMatrix.h']
