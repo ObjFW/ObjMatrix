@@ -2,6 +2,7 @@ project('ObjMatrix', 'objc',
   version: '0.1',
   meson_version: '>= 1.5.0',
   default_options: {
+    'b_asneeded': 'false',
     'warning_level': '3',
   })
 
