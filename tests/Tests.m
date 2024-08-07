@@ -37,7 +37,8 @@ OF_APPLICATION_DELEGATE(Tests)
 
 - (void)applicationDidFinishLaunching: (OFNotification *)notification
 {
-	__auto_type environment = OFApplication.environment;
+	OFDictionary<OFString *, OFString *> *environment =
+	    OFApplication.environment;
 	if (environment[@"OBJMATRIX_USER"] == nil ||
 	    environment[@"OBJMATRIX_PASS"] == nil ||
 	    environment[@"OBJMATRIX_HS"] == nil) {

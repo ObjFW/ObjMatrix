@@ -420,7 +420,7 @@ validateHomeserver(OFIRI *homeserver)
 
 - (void)sendMessage: (OFString *)message
 	     roomID: (OFString *)roomID
-	      block: (MTXClientResponseBlock)block;
+	      block: (MTXClientResponseBlock)block
 {
 	void *pool = objc_autoreleasePoolPush();
 	OFString *path = [OFString stringWithFormat:
