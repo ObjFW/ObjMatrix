@@ -16,23 +16,23 @@ cannot be compiled with GCC.
 
 Then install [ObjSQLite3](https://fl.nil.im/objsqlite3):
 
-  fossil clone https://fl.nil.im/objsqlite3
-  cd objsqlite3
-  meson setup build
-  meson compile -C build
-  sudo meson install -C build
+    fossil clone https://fl.nil.im/objsqlite3
+    cd objsqlite3
+    meson setup build
+    meson compile -C build
+    sudo meson install -C build
 
 Now you can build and install ObjMatrix like this:
 
-  fossil clone https://fl.nil.im/objmatrix
-  cd objmatrix
-  meson setup build
-  meson compile -C build
-  sudo meson install -C build
+    fossil clone https://fl.nil.im/objmatrix
+    cd objmatrix
+    meson setup build
+    meson compile -C build
+    sudo meson install -C build
 
 You can run the tests like this:
 
-  meson test -C build
+    meson test -C build
 
 ## Contributing
 
