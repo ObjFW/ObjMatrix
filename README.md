@@ -9,34 +9,34 @@ It is currently in early development stages.
 
 ## How to build it?
 
-You need [ObjFW](https://objfw.nil.im) and
-[ObjSQLite3](https://fossil.nil.im/objsqlite3) installed in order to do this.
+Install [ObjFW](https://objfw.nil.im) first, either via your distribution on by
+following the instructions on how to compile it yourself. Make sure you compile
+ObjFW using Clang, as ObjMatrix is written in modern Objective-C and hence
+cannot be compiled with GCC.
 
-ObjMatrix uses modern Objective-C, and hence cannot be compiled with GCC, but
-only with Clang. So install Clang first and ObjFW will automatically pick it up.
+Then install [ObjSQLite3](https://fl.nil.im/objsqlite3):
 
-You can install them all like this:
+  fossil clone https://fl.nil.im/objsqlite3
+  cd objsqlite3
+  meson setup build
+  meson compile -C build
+  sudo meson install -C build
 
-    $ for i in objfw objsqlite3 objmatrix; do
-          fossil clone https://fossil.nil.im/$i $i.fossil &&
-          mkdir $i &&
-          cd $i &&
-          fossil open ../$i.fossil &&
-          ./autogen.sh &&
-          ./configure &&
-          make &&
-          sudo make install &&
-          cd .. || break
-      done
+Now you can build and install ObjMatrix like this:
 
-You might need to install your distribution's `-dev` packages for OpenSSL
-beforehand. E.g. on Ubuntu:
+  fossil clone https://fl.nil.im/objmatrix
+  cd objmatrix
+  meson setup build
+  meson compile -C build
+  sudo meson install -C build
 
-    $ sudo apt install libssl-dev
+You can run the tests like this:
+
+  meson test -C build
 
 ## Contributing
 
 Just create an account on the
-[ObjMatrix Fossil](https://fossil.nil.im/objmatrix) and post your patch on the
-[forum](https://fossil.nil.im/objmatrix/forum). After a few patches, you will
+[ObjMatrix Fossil](https://fl.nil.im/objmatrix) and post your patch on the
+[forum](https://fl.nil.im/objmatrix/forum). After a few patches, you will
 be granted commit access.
