@@ -27,18 +27,18 @@ OF_ASSUME_NONNULL_BEGIN
 /**
  * @brief Creates a new SQLite3-based storage for @ref MTXClient.
  *
- * @param path The path for the SQLite3 database
+ * @param IRI The IRI for the SQLite3 database
  * @return An autoreleased MTXSQLite3Storage
  */
-+ (instancetype)storageWithPath: (OFString *)path;
++ (instancetype)storageWithIRI: (OFIRI *)IRI;
 
 /**
  * @brief Initializes an already allocated MTXSQLite3Storage.
  *
- * @param path The path for the SQLite3 database
+ * @param IRI The IRI for the SQLite3 database
  * @return An initialized MTXSQLite3Storage
  */
-- (instancetype)initWithPath: (OFString *)path OF_DESIGNATED_INITIALIZER;
+- (instancetype)initWithIRI: (OFIRI *)IRI OF_DESIGNATED_INITIALIZER;
 @end
 
 OF_ASSUME_NONNULL_END

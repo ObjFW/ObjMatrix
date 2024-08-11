@@ -29,19 +29,19 @@
 	SL3PreparedStatement *_joinedRoomsGetStatement;
 }
 
-+ (instancetype)storageWithPath: (OFString *)path
++ (instancetype)storageWithIRI: (OFIRI *)IRI
 {
-	return [[[self alloc] initWithPath: path] autorelease];
+	return [[[self alloc] initWithIRI: IRI] autorelease];
 }
 
-- (instancetype)initWithPath: (OFString *)path
+- (instancetype)initWithIRI: (OFIRI *)IRI
 {
 	self = [super init];
 
 	@try {
 		void *pool = objc_autoreleasePoolPush();
 
-		_conn = [[SL3Connection alloc] initWithPath: path];
+		_conn = [[SL3Connection alloc] initWithIRI: IRI];
 
 		[self createTables];
 
@@ -134,7 +134,7 @@
 		return nil;
 
 	OFString *nextBatch =
-	    [_nextBatchGetStatement.rowDictionary[@"next_batch"] retain];
+	    [_nextBatchGetStatement.currentRowDictionary[@"next_batch"] retain];
 
 	objc_autoreleasePoolPop(pool);
 
@@ -179,7 +179,7 @@
 
 	while ([_joinedRoomsGetStatement step])
 		[joinedRooms addObject:
-		    _joinedRoomsGetStatement.rowDictionary[@"room_id"]];
+		    _joinedRoomsGetStatement.currentRowDictionary[@"room_id"]];
 
 	objc_autoreleasePoolPop(pool);
 

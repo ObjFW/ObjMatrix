@@ -45,8 +45,9 @@ OF_APPLICATION_DELEGATE(Tests)
 	}
 
 	OFIRI *homeserver = [OFIRI IRIWithString: environment[@"OBJMATRIX_HS"]];
+	OFIRI *storageIRI = [OFIRI fileIRIWithPath: @"tests.db"];
 	id <MTXStorage> storage =
-	    [MTXSQLite3Storage storageWithPath: @"tests.db"];
+	    [MTXSQLite3Storage storageWithIRI: storageIRI];
 	[MTXClient logInWithUser: environment[@"OBJMATRIX_USER"]
 			password: environment[@"OBJMATRIX_PASS"]
 		      homeserver: homeserver
