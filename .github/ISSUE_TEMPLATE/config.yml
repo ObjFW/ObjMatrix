@@ -1,15 +1,15 @@
 blank_issues_enabled: true
 contact_links:
   - name: New ObjMatrix ticket
-    url: https://fossil.nil.im/objmatrix/tktnew
+    url: https://fl.nil.im/objmatrix/tktnew
     about:
       Please use this to create a new ticket. You can also report issues on
       GitHub, but this is preferred.
   - name: Existing ObjMatrix tickets
-    url: https://fossil.nil.im/objmatrix/reportlist
+    url: https://fl.nil.im/objmatrix/reportlist
     about: Please use this to look for existing tickets.
   - name: ObjMatrix Forum
-    url: https://fossil.nil.im/objmatrix/forum
+    url: https://fl.nil.im/objmatrix/forum
     about: Please use this if you have questions or want support.
   - name: ObjFW Matrix Room
     url: https://matrix.to/#/%23objfw:nil.im
