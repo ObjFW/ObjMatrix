@@ -22,6 +22,7 @@ configure_file(
   input: 'ObjMatrix.oc.in',
   output: 'ObjMatrix.oc',
   configuration: {
+    'includedir': get_option('prefix') / get_option('includedir'),
     'libdir': get_option('prefix') / get_option('libdir'),
   },
   install: true,
